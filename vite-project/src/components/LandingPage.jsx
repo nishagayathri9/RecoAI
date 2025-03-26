@@ -2,7 +2,7 @@ import React from "react";
 
 export default function LandingPage() {
     return (
-      <div className="flex items-center bg-white justify-between px-25 py-15">
+      <div className="flex items-center bg-transparent justify-between px-25 py-20">
         {/* Left Side Content */}
         <div className="max-w-xl">
           <h1 className="text-5xl font-bold text-black mb-10 px-6">

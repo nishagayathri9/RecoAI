@@ -1,17 +1,6 @@
 import { useState } from "react";
-import HD450 from '../assets/HD450.png';
 
-export default function RecommendationsDashboard() {
-
-  const productImages = import.meta.glob('../assets/*.png', {
-    eager: true,
-    import: 'default',
-  });
-  
-  function getImageById(id) {
-    return productImages[`../assets/${id}.png`] || null;
-  }
-  
+export default function ColdStart() {
   const users = {
     "User #BK30": {
       purchases: [
@@ -29,18 +18,18 @@ export default function RecommendationsDashboard() {
         { id: "WH225", name: "Wireless Headphones", category: "Audio", color: "Silver", date: "22/05/2023" },
       ],
       recommendations: [
-        { id: "RD873", name: "4K UltraWide Monitor", category: "Electronics", color: "Black", score: 85 },
-        { id: "MS351", name: "Mechanical Gaming Keyboard", category: "Accessories", color: "RGB", score: 80 },
+        { id: "RD8763", name: "4K UltraWide Monitor", category: "Electronics", color: "Black", score: 85 },
+        { id: "MS305", name: "Mechanical Gaming Keyboard", category: "Accessories", color: "RGB", score: 80 },
       ],
     },
     "User #FN91": {
       purchases: [
-        { id: "FB920", name: "Smart Fitness Band", category: "Wearable", color: "Blue", date: "08/02/2023" },
-        { id: "YT995", name: "Yoga Mat", category: "Fitness", color: "Purple", date: "28/01/2023" },
+        { id: "FB900", name: "Smart Fitness Band", category: "Wearable", color: "Blue", date: "08/02/2023" },
+        { id: "YT990", name: "Yoga Mat", category: "Fitness", color: "Purple", date: "28/01/2023" },
       ],
       recommendations: [
-        { id: "GY101", name: "Adjustable Dumbbells", category: "Fitness", color: "Black", score: 88 },
-        { id: "BL856", name: "Protein Blender Bottle", category: "Nutrition", color: "Transparent", score: 70 },
+        { id: "GYM001", name: "Adjustable Dumbbells", category: "Fitness", color: "Black", score: 88 },
+        { id: "BLD456", name: "Protein Blender Bottle", category: "Nutrition", color: "Transparent", score: 70 },
       ],
     },
   };
@@ -52,82 +41,39 @@ export default function RecommendationsDashboard() {
       <div className="w-full max-w-6xl bg-gray-100 p-6 rounded-2xl shadow-lg">
         {/* Header */}
         <header className="flex justify-center items-center pb-6 p-4 mb-5">
-          <h1 className="text-2xl font-bold text-gray-800">Product Recommendations</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Cold Start Problem</h1>
         </header>
 
         {/* Content Layout */}
         <div className="flex gap-6">
           {/* Sidebar */}
-          <aside className="w-1/4">
-        <div className="w-full px-4 py-5 bg-white flex flex-col gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)]">
-          <legend className="text-xl font-semibold mb-3 select-none">Choose User</legend>
-
-          {Object.keys(users).map((user, index) => (
-            <label
-              key={user}
-              htmlFor={user}
-              className="relative group cursor-pointer"
-            >
-              <input
-                type="radio"
-                id={user}
-                name="userSelection"
-                value={user}
-                checked={selectedUser === user}
-                onChange={() => setSelectedUser(user)}
-                className="peer hidden"
-              />
-              <div
-                className={`h-14 flex items-center gap-3 px-3 rounded-lg transition
-                  ${selectedUser === user
-                    ? "text-blue-500 bg-blue-50 ring-1 ring-blue-300"
-                    : "hover:bg-zinc-100 text-gray-800"}
-                `}
-              >
-                <div className="w-5 fill-blue-500">
-                  {/* The original hexagon icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                    className="w-5 h-5 text-blue-500">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-
-                </div>
-
-                <span className="font-medium select-none">{user}</span>
-
-                {/* Custom radio bubble */}
-                <div className="ml-auto w-4 h-4 border-2 rounded-full flex items-center justify-center 
-                    border-gray-400 peer-checked:border-blue-500">
-                  <div
-                    className={`w-2 h-2 rounded-full transition-transform
-                      ${selectedUser === user ? "bg-blue-500 scale-100" : "scale-0"}
-                    `}
+          <aside className="w-1/4 bg-white p-4 rounded-lg shadow">
+            <h2 className="text-lg font-semibold mb-3">Select User</h2>
+            <div className="space-y-2">
+              {Object.keys(users).map((user) => (
+                <label key={user} className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="userSelection"
+                    value={user}
+                    checked={selectedUser === user}
+                    onChange={() => setSelectedUser(user)}
+                    className="accent-blue-500"
                   />
-                </div>
-              </div>
-            </label>
-
-          ))}
-        </div>
-      </aside>
-
+                  <span className="text-sm">{user}</span>
+                </label>
+              ))}
+            </div>
+          </aside>
 
           {/* Main Sections */}
           <div className="flex-grow grid grid-cols-2 gap-6">
             {/* Purchases Section */}
             <section className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-4">Purchases</h3>
+              <h3 className="text-lg font-semibold mb-4">Recently Viewed Products</h3>
               {users[selectedUser].purchases.map((product) => (
                 <div key={product.id} className="flex items-center bg-gray-100 p-4 rounded-lg mb-2">
-                    <img
-                      src={getImageById(product.id)}
-                      alt={product.name}
-                      className="w-10 h-10 ml-2 mr-8 object-cover rounded"
-                    />
-
-
+                  <div className="w-16 h-16 bg-gray-300 rounded mr-4"></div>
                   <div>
                     <h4 className="font-semibold">{product.name}</h4>
                     <p className="text-sm text-gray-600">ID: #{product.id}</p>
@@ -138,7 +84,6 @@ export default function RecommendationsDashboard() {
                 </div>
               ))}
             </section>
-
 
             {/* Recommendations Section */}
             <section className="bg-white p-6 rounded-lg shadow">
