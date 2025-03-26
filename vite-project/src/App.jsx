@@ -1,5 +1,5 @@
 import React from "react";
-import "./app.css";
+import "./App.css";
 import LandingPage from "./components/LandingPage";
 import RecommendationsDashboard from "./components/RecommendationsDashboard";
 
