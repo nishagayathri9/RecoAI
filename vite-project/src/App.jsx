@@ -8,17 +8,17 @@ function App() {
   return (
     <div className="relative">
       {/* Slide 1: Landing Page */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-green-50">
+      <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-blue-100">
         <LandingPage />
       </div>
 
       {/* Slide 2: Recommendations Dashboard */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-green-50">
+      <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-blue-100">
         <RecommendationsDashboard />
       </div>
 
        {/* Slide 3: Cold Start Dashboard */}
-       <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-green-0">
+       <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-blue-100">
         <ColdStart/>
       </div>     
 
