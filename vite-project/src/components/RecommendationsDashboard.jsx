@@ -19,8 +19,8 @@ export default function RecommendationsDashboard() {
         { id: "DC784", name: "Modern Desk Lamp", category: "Lighting", color: "White", date: "05/07/2023" },
       ],
       recommendations: [
-        { id: "SM012", name: "Smart LED Strip", category: "Smart Home", color: "Multi-color", score: 90 },
-        { id: "PL890", name: "Indoor Plant Set", category: "Home & Garden", color: "Green", score: 78 },
+        { id: "SM012", name: "Smart LED Strip", category: "Home", color: "Multi-color", score: 90 },
+        { id: "PL890", name: "Indoor Plant Set", category: "Home", color: "Green", score: 78 },
       ],
     },
     "User #XM13": {
@@ -30,7 +30,7 @@ export default function RecommendationsDashboard() {
       ],
       recommendations: [
         { id: "RD873", name: "4K UltraWide Monitor", category: "Electronics", color: "Black", score: 85 },
-        { id: "MS351", name: "Mechanical Gaming Keyboard", category: "Accessories", color: "RGB", score: 80 },
+        { id: "MS351", name: "Mechanical Keyboard", category: "Accessories", color: "RGB", score: 80 },
       ],
     },
     "User #FN91": {
@@ -40,7 +40,7 @@ export default function RecommendationsDashboard() {
       ],
       recommendations: [
         { id: "GY101", name: "Adjustable Dumbbells", category: "Fitness", color: "Black", score: 88 },
-        { id: "BL856", name: "Protein Blender Bottle", category: "Nutrition", color: "Transparent", score: 70 },
+        { id: "BL856", name: "Blender Bottle", category: "Nutrition", color: "Transparent", score: 70 },
       ],
     },
   };
@@ -60,7 +60,7 @@ export default function RecommendationsDashboard() {
           {/* Sidebar */}
           <aside className="w-1/4">
         <div className="w-full px-4 py-5 bg-white flex flex-col gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)]">
-          <legend className="text-xl font-semibold mb-3 select-none">Choose User</legend>
+          <legend className="text-xl font-semibold mb-3 select-none">Choose Customer</legend>
 
           {Object.keys(users).map((user, index) => (
             <label
@@ -145,7 +145,12 @@ export default function RecommendationsDashboard() {
               <h3 className="text-lg font-semibold mb-4">Recommendations</h3>
               {users[selectedUser].recommendations.map((product) => (
                 <div key={product.id} className="flex items-center bg-gray-100 p-4 rounded-lg mb-2">
-                  <div className="w-16 h-16 bg-gray-300 rounded mr-4"></div>
+                  <img
+                    src={getImageById(product.id)}
+                    alt={product.name}
+                    className="w-10 h-10 ml-2 mr-8 object-cover rounded"
+                  />
+
                   <div>
                     <h4 className="font-semibold">{product.name} </h4>
                     <p className="text-sm text-gray-600">ID: #{product.id}</p>
