@@ -1,4 +1,6 @@
 import React from "react";
+import landingImage from '../assets/landing-image.png';
+
 
 export default function LandingPage() {
     return (
@@ -18,11 +20,8 @@ export default function LandingPage() {
         
         {/* Right Side Illustration */}
         <div className="w-1/2 px-6 flex justify-end">
-          <img
-            src="src/assets/landing-image.png"
-            alt="AI-powered eCommerce"
-            className="max-w-md"
-          />
+        <img src={landingImage} alt="AI-powered eCommerce" className="max-w-md" />
+
         </div>
       </div>
     );
