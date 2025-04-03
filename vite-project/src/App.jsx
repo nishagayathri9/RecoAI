@@ -1,27 +1,25 @@
 import React from "react";
-import "./App.css";
+import Navbar from "./components/Navbar";
 import LandingPage from "./components/LandingPage";
-import ColdStart from "./components/ColdStart";
 import RecommendationsDashboard from "./components/RecommendationsDashboard";
+import ColdStart from "./components/ColdStart";
 
 function App() {
   return (
-    <div className="relative">
-      {/* Slide 1: Landing Page */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-blue-100">
+    <div className="relative scroll-smooth">
+      <Navbar />
+
+      <div id="landing">
         <LandingPage />
       </div>
 
-      {/* Slide 2: Recommendations Dashboard */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-blue-100">
+      <div id="product-rec">
         <RecommendationsDashboard />
       </div>
 
-       {/* Slide 3: Cold Start Dashboard */}
-       <div className="sticky top-0 h-screen flex flex-col justify-center bg-gradient-to-b from-white to-blue-100">
-        <ColdStart/>
-      </div>     
-
+      <div id="cold-start">
+        <ColdStart />
+      </div>
     </div>
   );
 }

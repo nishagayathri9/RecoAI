@@ -49,7 +49,7 @@ export default function RecommendationsDashboard() {
 
   return (
     <div className="h-screen flex justify-center items-center bg-transparent p-2">
-      <div className="w-full max-w-6xl bg-gray-100 p-6 rounded-2xl shadow-lg">
+      <div className="w-full max-w-6xl bg-gray-50 p-6 rounded-2xl shadow-lg">
         {/* Header */}
         <header className="flex justify-center items-center pb-6 p-4 mb-5">
           <h1 className="text-2xl font-bold text-gray-800">Product Recommendations</h1>
