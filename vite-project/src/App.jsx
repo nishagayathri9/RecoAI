@@ -28,10 +28,6 @@ function App() {
         <HowItWorks />
       </div>
 
-      <div id="product-rec">
-        <RecommendationsDashboard />
-      </div>
-
       <div id="cold-start">
         <ColdStart />
       </div>

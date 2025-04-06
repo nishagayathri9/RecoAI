@@ -3,7 +3,7 @@ import landingImage from '../assets/landing-image.png';
 
 export default function LandingPage() {
   return (
-    <div className="flex items-start bg-gradient-to-b from-blue-50 to-white-100 justify-between px-25 py-20 "> 
+    <div className="flex items-start bg-transparent justify-between px-25 py-20 "> 
       {/* You can adjust mt-32 to mt-40 or more for more vertical space */}
 
       {/* Left Side Content */}

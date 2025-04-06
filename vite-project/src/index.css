@@ -45,7 +45,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #372222;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -82,7 +82,7 @@ button:focus-visible {
   }
   
   .animated-gradient {
-    background: linear-gradient(270deg, #a855f7, #3b82f6);
+    background: linear-gradient(270deg, #a855f7, #7575d7, #deb1cb);
     background-size: 400% 400%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

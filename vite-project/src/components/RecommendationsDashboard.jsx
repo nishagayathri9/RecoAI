@@ -3,7 +3,7 @@ import HD450 from '../assets/HD450.png';
 
 export default function RecommendationsDashboard() {
 
-  const productImages = import.meta.glob('../assets/*.png', {
+  const productImages = import.meta.glob('/src/assets/*.png', {
     eager: true,
     import: 'default',
   });

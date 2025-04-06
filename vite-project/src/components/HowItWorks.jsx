@@ -4,7 +4,7 @@ import { ShoppingBag, Sparkles, TrendingUp } from 'lucide-react';
 
 const HowItWorks = () => {
   return (
-    <div className="p-8 ">
+    <div className="p-8  bg-white-500 ">
       {/* Header */}
       <h2 className="text-5xl font-bold text-center mt-12 mb-12">How It Works</h2>
       

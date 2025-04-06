@@ -3,9 +3,8 @@ import { Link } from 'react-scroll';
 import { motion } from 'framer-motion';
 
 const navItems = [
-  { id: 'landing', label: 'RecoAI' },
+  { id: 'landing', label: 'Home' },
   { id: 'how-it-works', label: 'Demo' },
-  { id: 'product-rec', label: 'Product Recommendations' },
   { id: 'cold-start', label: 'Cold Start' }
 ];
 
