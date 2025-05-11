@@ -26,8 +26,8 @@ RecoAI is an open-source hybrid recommendation system that leverages both **coll
 ## **📂 Repository Structure**  
 ```plaintext
 📦 recoai
- ┣ 📂 data                 # Sample datasets & preprocessing scripts
- ┣ 📂 models               # Pretrained models & training scripts
+ ┣ 📂 backend
+ ┣ 📂 vite-project         # website code         
  ┣ 📂 notebooks            # Jupyter notebooks for experiments
  ┣ 📂 src                  # Core recommendation engine
  ┃ ┣ 📜 collaborative.py   # Collaborative filtering implementation
