@@ -27,6 +27,7 @@ backend/venv/
 __pycache__/
 *.pyc
 
+
 # macOS
 .DS_Store
 
@@ -39,3 +40,5 @@ __pycache__/
 *.njsproj
 *.sln
 *.sw?
+
+site-packages
