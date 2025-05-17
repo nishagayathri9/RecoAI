@@ -4,6 +4,7 @@ import os
 import torch
 import pandas as pd
 from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from model import DeepFM
 from typing import List, Optional
@@ -13,7 +14,17 @@ NUM_USERS, NUM_ITEMS = 15264, 28638
 EMB_DIM, META_DIM, HIDDEN_DIM = 16, 1546, 64
 # ────────────────────────────────────────────────────────────────────────────
 
-app = FastAPI(title="RecoAI")
+app = FastAPI(
+    title="RecoAI",
+    version="0.1.1",    # ← bump your API version here
+)
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["http://localhost:5173"],  # your front-end origin
+  allow_methods=["*"],
+  allow_headers=["*"],
+)
 
 # Globals (populated by /upload/)
 MODEL: DeepFM
