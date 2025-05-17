@@ -26,7 +26,7 @@ const Hero: React.FC = () => {
 
       {/* Background video – scaled to 70 % */}
       <video
-        className="absolute inset-0 w-full h-full object-cover z-10 filter brightness-100 opacity-10 transform scale-[0.7] origin-bottom-right"
+        className="absolute inset-0 w-full h-full object-cover z-10 filter brightness-100 opacity-15 transform scale-[0.7] origin-bottom-right"
         style={{ objectPosition: 'right bottom' }}
         src={bgVideo}
         autoPlay
@@ -71,7 +71,7 @@ const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Link to="/playground" className="btn-primary group">
+            <Link to="/test" className="btn-primary group">
               <ShoppingCart className="mr-2 h-5 w-5" />
               Try Demo
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
