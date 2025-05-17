@@ -27,8 +27,7 @@ const Test: React.FC = () => {
     form.append('item_file', itemFile);
 
     try {
-      // Use relative API path
-      const res = await fetch('/api/upload', {
+      const res = await fetch('http://localhost:8000/upload/', {
         method: 'POST',
         body: form,
       });
@@ -51,8 +50,7 @@ const Test: React.FC = () => {
       return;
     }
     try {
-      // Use relative API path
-      const res = await fetch('/api/predict', {
+      const res = await fetch('http://localhost:8000/predict/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ u_idx: 0, i_idx: 0 }),
