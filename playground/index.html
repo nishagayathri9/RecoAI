@@ -2,69 +2,155 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Embedding Playground w/ Zoom, Orbit Toggle, Filters & Users</title>
+  <title>Embedding Playground w/ 3D Points & macOS-Style UI</title>
+
+  <!-- embedded Apple-style CSS -->
   <style>
-    body { margin: 0; overflow: hidden; background: #444444; }
-    canvas { display: block; width: 100vw; height: 100vh; background: transparent; cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><circle cx='16' cy='16' r='10' fill='hotpink'/></svg>") 16 16, auto; }
-    .btn { position: absolute; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; font-size: 14px; height: 32px; line-height: 32px; padding: 0 10px; cursor: pointer; z-index: 2; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111111;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #fff;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      background: transparent;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><circle cx='16' cy='16' r='10' fill='hotpink'/></svg>") 16 16, auto;
+    }
+    .btn {
+      position: absolute;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      height: 32px;
+      line-height: 32px;
+      padding: 0 12px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: background 0.2s ease;
+      font-family: inherit;
+      z-index: 2;
+    }
+    .btn:hover { background: rgba(255,255,255,0.20); }
+    .btn:active { background: rgba(255,255,255,0.28); }
+
+    #filter-panel {
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      background: rgba(255,255,255,0.12);
+      padding: 12px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      color: #fff;
+      font-size: 13px;
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 2;
+    }
+    #filter-panel strong { display: block; margin-bottom: 8px; font-weight: 500; }
+    #filter-panel label { display: block; margin-bottom: 6px; cursor: pointer; }
+    #filter-panel input { margin-right: 6px; }
+
+    #tooltip {
+      position: absolute;
+      padding: 6px 10px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 12px;
+      border-radius: 6px;
+      pointer-events: none;
+      display: none;
+      white-space: nowrap;
+      z-index: 3;
+    }
+
+    /* built-in UI */
     #toggle-orbit { top: 10px; left: 10px; }
     #zoom-in      { top: 10px; right: 110px; }
     #zoom-out     { top: 10px; right: 70px; }
-    #filter-panel { position: absolute; top: 50px; left: 10px; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; color: white; font-size: 13px; z-index: 2; max-height: 200px; overflow-y: auto; }
-    #filter-panel label { display: block; margin-bottom: 4px; cursor: pointer; }
-    #toggle-users { position: absolute; left: 10px; top: 300px; }
-    #tooltip { position: absolute; padding: 4px 8px; background: rgba(0,0,0,0.7); color: white; border-radius: 4px; pointer-events: none; font-size: 12px; display: none; z-index: 3; white-space: nowrap; }
+    #toggle-users { top: 300px; left: 10px; }
+
+    /* arrow controls */
+    #btn-up    { bottom: 100px; right: 60px; }
+    #btn-down  { bottom: 20px;  right: 60px; }
+    #btn-left  { bottom: 60px;  right: 100px; }
+    #btn-right { bottom: 60px;  right: 20px; }
   </style>
+
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
 </head>
 <body>
+  <!-- existing UI -->
   <button id="toggle-orbit" class="btn">Pause Orbit</button>
   <button id="zoom-in"      class="btn">＋</button>
   <button id="zoom-out"     class="btn">－</button>
 
   <div id="filter-panel">
-    <strong>Filter Categories:</strong>
-    <label><input type="checkbox" data-cat="0" checked> Category 0</label>
-    <label><input type="checkbox" data-cat="1" checked> Category 1</label>
-    <label><input type="checkbox" data-cat="2" checked> Category 2</label>
-    <label><input type="checkbox" data-cat="3" checked> Category 3</label>
-    <label><input type="checkbox" data-cat="4" checked> Category 4</label>
-    <label><input type="checkbox" data-cat="5" checked> Category 5</label>
-    <label><input type="checkbox" data-cat="6" checked> Category 6</label>
-    <label><input type="checkbox" data-cat="7" checked> Category 7</label>
-    <label><input type="checkbox" data-cat="8" checked> Category 8</label>
-    <label><input type="checkbox" data-cat="9" checked> Category 9</label>
+    <strong>Filter Clusters:</strong>
+    <label><input type="checkbox" data-cat="1" checked> Cluster 1</label>
+    <label><input type="checkbox" data-cat="2" checked> Cluster 2</label>
+    <label><input type="checkbox" data-cat="3" checked> Cluster 3</label>
+    <label><input type="checkbox" data-cat="4" checked> Cluster 4</label>
+    <label><input type="checkbox" data-cat="5" checked> Cluster 5</label>
+    <label><input type="checkbox" data-cat="6" checked> Cluster 6</label>
+    <label><input type="checkbox" data-cat="7" checked> Cluster 7</label>
   </div>
 
   <button id="toggle-users" class="btn">Hide User Interactions</button>
 
+  <!-- arrow buttons -->
+  <button id="btn-up"    class="btn">↑</button>
+  <button id="btn-down"  class="btn">↓</button>
+  <button id="btn-left"  class="btn">←</button>
+  <button id="btn-right" class="btn">→</button>
+
   <div id="tooltip"></div>
   <canvas id="gl"></canvas>
+
   <script>
   (function(){
-    const nCategories = 10;
-    const categoryNames = Array.from({ length: nCategories }, (_, i) => `Category ${i}`);
-    const palette = [0x1f77b4,0xff7f0e,0x2ca02c,0xd62728,0x9467bd,0x8c564b,0xe377c2,0x7f7f7f,0xbcbd22,0x17becf];
+    const nClusters    = 7;
+    const clusterNames = Array.from({ length: nClusters }, (_, i) => `Cluster ${i}`);
+    const palette      = [0x1f77b4,0xff7f0e,0x2ca02c,0xd62728,0x9467bd,0x8c564b,0xe377c2];
 
     // three.js setup
-    const canvas = document.getElementById('gl');
+    const canvas   = document.getElementById('gl');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x444444,1);
-    const scene = new THREE.Scene();
+    renderer.setClearColor(0x111111, 1);
+
+    const scene  = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-    scene.add(new THREE.AxesHelper(5));
+    scene.add(new THREE.AxesHelper(50));
 
-    // state
-    let radius=10, azimuth=0, polar=Math.PI/6;
-    let orbitEnabled=true, dragging=false, lastX=0, lastY=0;
-    const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
-    const tooltip = document.getElementById('tooltip');
+    // floor grid
+    const grid = new THREE.GridHelper(200, 50, 0x222222, 0x222222);
+    grid.position.y = -0.1;
+    scene.add(grid);
 
-    const categoryPoints = [];
-    let userMeshes = [], userEdges = [];
-    let productsData = [];
-    let showUsers = true;
+    // lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(10,20,10);
+    scene.add(dirLight);
+
+    // camera controls
+    let radius = 10, azimuth = 0, polar = Math.PI/6;
+    let orbitEnabled = true, dragging = false, lastX = 0, lastY = 0;
+
+    const raycaster   = new THREE.Raycaster(),
+          mouse       = new THREE.Vector2(),
+          tooltip     = document.getElementById('tooltip');
+    const clusterPoints = [];
+    let userMeshes = [], userEdges = [], productsData = [], showUsers = true;
 
     window.addEventListener('resize', ()=>{
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -84,130 +170,169 @@
     }
     updateCamera();
 
-    // UI hooks
-    document.getElementById('zoom-in').onclick = ()=>{ radius*=0.8; updateCamera(); };
-    document.getElementById('zoom-out').onclick= ()=>{ radius*=1.2; updateCamera(); };
+    // built-in UI listeners
+    document.getElementById('zoom-in').onclick  = ()=>{ radius*=0.8;  updateCamera(); };
+    document.getElementById('zoom-out').onclick = ()=>{ radius*=1.2;  updateCamera(); };
     document.getElementById('toggle-orbit').onclick = function(){
-      orbitEnabled=!orbitEnabled;
+      orbitEnabled = !orbitEnabled;
       this.textContent = orbitEnabled ? 'Pause Orbit' : 'Resume Orbit';
       tooltip.style.display = 'none';
     };
     document.getElementById('toggle-users').onclick = function(){
       showUsers = !showUsers;
       this.textContent = showUsers ? 'Hide User Interactions' : 'Show User Interactions';
-      userMeshes.forEach(m=>m.visible=showUsers);
-      userEdges.forEach(e=>e.visible=showUsers);
+      userMeshes.forEach(m=>m.visible = showUsers);
+      userEdges.forEach(e=>e.visible = showUsers);
     };
-    document.querySelectorAll('#filter-panel input').forEach(cb=>cb.onchange=e=>{
-      const cat = +e.target.dataset.cat;
-      const entry = categoryPoints.find(o=>o.cat===cat);
-      if(entry) entry.mesh.visible = e.target.checked;
+    document.querySelectorAll('#filter-panel input').forEach(cb=>{
+      cb.onchange = e=>{
+        const cat = +e.target.dataset.cat;
+        const entry = clusterPoints.find(o=>o.cat===cat);
+        if(entry) entry.mesh.visible = e.target.checked;
+      };
     });
 
-    // interaction handlers
+    // new arrow button listeners
+    document.getElementById('btn-up').onclick = ()=>{
+      polar = Math.max(0.01, polar - 0.1);
+      updateCamera();
+    };
+    document.getElementById('btn-down').onclick = ()=>{
+      polar = Math.min(Math.PI - 0.01, polar + 0.1);
+      updateCamera();
+    };
+    document.getElementById('btn-left').onclick = ()=>{
+      azimuth -= 0.1;
+      updateCamera();
+    };
+    document.getElementById('btn-right').onclick = ()=>{
+      azimuth += 0.1;
+      updateCamera();
+    };
+
+    // mouse/touch for manual orbit & tooltips (unchanged)
     canvas.addEventListener('mousedown', e=>{
-      if(!orbitEnabled){ dragging=true; lastX=e.clientX; lastY=e.clientY; }
+      if (!orbitEnabled) { dragging = true; lastX = e.clientX; lastY = e.clientY; }
     });
     window.addEventListener('mousemove', e=>{
-      if(dragging){
-        azimuth -= (e.clientX-lastX)*0.005;
-        polar   -= (e.clientY-lastY)*0.005;
+      if (dragging) {
+        azimuth -= (e.clientX - lastX)*0.005;
+        polar   -= (e.clientY - lastY)*0.005;
         polar = Math.max(0.01, Math.min(Math.PI-0.01, polar));
         lastX = e.clientX; lastY = e.clientY;
         updateCamera();
       }
-      if(!orbitEnabled){
+      if (!orbitEnabled) {
         mouse.x = (e.clientX/window.innerWidth)*2 -1;
         mouse.y = -(e.clientY/window.innerHeight)*2 +1;
         raycaster.setFromCamera(mouse, camera);
+
         let shown = false;
-        // category tooltip
-        categoryPoints.forEach(({mesh,cat})=>{
-          if(!mesh.visible) return;
-          if(raycaster.intersectObject(mesh).length){
-            tooltip.style.display='block';
-            tooltip.textContent=categoryNames[cat];
-            tooltip.style.left=`${e.clientX+8}px`;
-            tooltip.style.top=`${e.clientY+8}px`;
+        clusterPoints.forEach(({mesh,cat})=>{
+          if(mesh.visible && raycaster.intersectObject(mesh).length){
+            tooltip.style.display = 'block';
+            tooltip.textContent  = clusterNames[cat];
+            tooltip.style.left   = `${e.clientX+8}px`;
+            tooltip.style.top    = `${e.clientY+8}px`;
             shown = true;
           }
         });
-        // user tooltip
-        if(!shown){
+        if(!shown) {
           userMeshes.forEach(mesh=>{
-            if(!mesh.visible) return;
-            if(raycaster.intersectObject(mesh).length){
-              tooltip.style.display='block';
-              tooltip.textContent = `${mesh.userId} has bought: ${mesh.categories.join(', ')}`;
-              tooltip.style.left=`${e.clientX+8}px`;
-              tooltip.style.top=`${e.clientY+8}px`;
+            if(mesh.visible && raycaster.intersectObject(mesh).length){
+              tooltip.style.display = 'block';
+              tooltip.textContent  = `${mesh.userId} has bought: ${mesh.clusters.join(', ')}`;
+              tooltip.style.left   = `${e.clientX+8}px`;
+              tooltip.style.top    = `${e.clientY+8}px`;
               shown = true;
             }
           });
         }
-        if(!shown) tooltip.style.display='none';
+        if(!shown) tooltip.style.display = 'none';
       }
     });
-    window.addEventListener('mouseup', ()=>{ dragging=false; });
+    window.addEventListener('mouseup', ()=>{ dragging = false; });
     canvas.addEventListener('wheel', e=>{
-      if(!orbitEnabled){ e.preventDefault(); radius *= e.deltaY < 0 ? 0.95 : 1.05; updateCamera(); }
+      if(!orbitEnabled){
+        e.preventDefault();
+        radius *= e.deltaY<0 ? 0.95 : 1.05;
+        updateCamera();
+      }
     }, {passive:false});
 
-    // load products
+    // load products & draw instanced spheres (unchanged)
     fetch('data/products.json')
       .then(r=>r.json()).then(data=>{
         productsData = data;
-        const buckets = Array.from({length:nCategories}, ()=>[]);
-        data.forEach(pt=>{ if(pt.category>=0&&pt.category<nCategories) buckets[pt.category].push([pt.x,pt.y,pt.z]); });
+        const buckets = Array.from({length:nClusters}, ()=>[]);
+        data.forEach(pt=>{
+          if(pt.cluster>=0&&pt.cluster<nClusters)
+            buckets[pt.cluster].push([pt.x,pt.y,pt.z]);
+        });
         buckets.forEach((pts,catIdx)=>{
           if(!pts.length) return;
-          const arr=new Float32Array(pts.length*3);
-          pts.forEach((p,i)=>arr.set(p,i*3));
-          const geom=new THREE.BufferGeometry(); geom.setAttribute('position', new THREE.BufferAttribute(arr,3)); geom.computeBoundingSphere();
-          const mat=new THREE.PointsMaterial({size:0.15, color: palette[catIdx], transparent:true,opacity:1});
-          const mesh=new THREE.Points(geom,mat);
-          scene.add(mesh); categoryPoints.push({cat:catIdx,mesh});
+          const geo = new THREE.SphereGeometry(0.2,12,12);
+          const mat = new THREE.MeshStandardMaterial({
+            color: palette[catIdx], roughness:0.5, metalness:0.2
+          });
+          const inst = new THREE.InstancedMesh(geo, mat, pts.length);
+          const dummy = new THREE.Object3D();
+          pts.forEach((p,i)=>{
+            dummy.position.set(...p);
+            dummy.updateMatrix();
+            inst.setMatrixAt(i, dummy.matrix);
+          });
+          scene.add(inst);
+          clusterPoints.push({cat:catIdx,mesh:inst});
         });
       }).catch(console.error);
 
-    // load users and draw
+    // load users & draw centroids+edges (unchanged)
     fetch('data/users.json')
       .then(r=>r.json()).then(users=>{
         users.forEach(user=>{
           const pts = user.purchases;
-          // compute categories
           const cats = pts.map(p=>{
-            const prod = productsData.find(q=>q.x===p[0] && q.y===p[1] && q.z===p[2]);
-            return prod ? categoryNames[prod.category] : 'Unknown';
+            const prod = productsData.find(q=>q.x===p[0]&&q.y===p[1]&&q.z===p[2]);
+            return prod ? clusterNames[prod.cluster] : 'Unknown';
           });
           const uniqueCats = [...new Set(cats)];
-          // centroid
-          const sum = pts.reduce((acc,p)=>[acc[0]+p[0], acc[1]+p[1], acc[2]+p[2]],[0,0,0]);
+          const sum = pts.reduce((a,p)=>[a[0]+p[0],a[1]+p[1],a[2]+p[2]],[0,0,0]);
           const centroid = sum.map(c=>c/pts.length);
-          // sphere
-          const sphG=new THREE.SphereGeometry(0.2,16,16);
-          const sphM=new THREE.MeshBasicMaterial({color:0xffff00});
-          const mesh=new THREE.Mesh(sphG,sphM);
+
+          const sphG = new THREE.SphereGeometry(0.2,16,16);
+          const sphM = new THREE.MeshBasicMaterial({color:0xffff00});
+          const mesh = new THREE.Mesh(sphG,sphM);
           mesh.position.set(...centroid);
           mesh.userId = user.user_id;
-          mesh.categories = uniqueCats;
-          scene.add(mesh); userMeshes.push(mesh);
-          // edges
-          const edgePts=new Float32Array(pts.length*6);
-          pts.forEach((p,i)=>{ edgePts.set(centroid,i*6); edgePts.set(p,i*6+3); });
-          const eg=new THREE.BufferGeometry(); eg.setAttribute('position',new THREE.BufferAttribute(edgePts,3));
-          const em=new THREE.LineBasicMaterial({color:0xffffff, transparent:true,opacity:0.6});
-          const lines=new THREE.LineSegments(eg,em);
-          scene.add(lines); userEdges.push(lines);
+          mesh.clusters = uniqueCats;
+          scene.add(mesh);
+          userMeshes.push(mesh);
+
+          const edgePts = new Float32Array(pts.length*6);
+          pts.forEach((p,i)=>{
+            edgePts.set(centroid, i*6);
+            edgePts.set(p,       i*6+3);
+          });
+          const eg = new THREE.BufferGeometry();
+          eg.setAttribute('position', new THREE.BufferAttribute(edgePts,3));
+          const em = new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:0.6});
+          const lines = new THREE.LineSegments(eg,em);
+          scene.add(lines);
+          userEdges.push(lines);
         });
       }).catch(console.error);
 
-    // animate loop
+    // render loop
     (function animate(){
-      if(orbitEnabled) { azimuth += 0.005; updateCamera(); }
+      if(orbitEnabled){
+        azimuth += 0.005;
+        updateCamera();
+      }
       renderer.render(scene,camera);
       requestAnimationFrame(animate);
     })();
+
   })();
   </script>
 </body>
