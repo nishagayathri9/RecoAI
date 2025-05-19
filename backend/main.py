@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.model import DeepFM
 from typing import List, Optional
+from backend.top_k import topK
 
 # ─── Model hyperparams (must match training) ────────────────────────────────
 NUM_USERS, NUM_ITEMS = 15264, 28638
@@ -45,7 +46,7 @@ def load_model():
         meta_dim=META_DIM,
         hidden_dim=HIDDEN_DIM
     )
-    ckpt = os.path.join(os.path.dirname(__file__), "deepfm_model.pth")
+    ckpt = os.path.join(os.path.dirname(__file__), "dien_deepfm_model_final.pth")
     if not os.path.isfile(ckpt):
         raise FileNotFoundError(f"Model checkpoint not found at {ckpt}")
     MODEL.load_state_dict(torch.load(ckpt, map_location="cpu"))
