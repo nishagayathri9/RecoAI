@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 
 // Components
 import FileUploader from '../components/dashboard/FileUploader';
+import ChatFab from '../components/dashboard/ChatFab';
+
 import { DatasetFile } from '../types';
 
 // --- Product Recommendations Dashboard types/data ---
@@ -470,6 +472,9 @@ const UserDashboardPage: React.FC = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Chat Floating Action Button */}
+      <ChatFab />
     </div>
   );
 };
