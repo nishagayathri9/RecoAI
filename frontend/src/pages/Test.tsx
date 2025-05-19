@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent } from 'react';
 
 // Reads your API server URL from .env.local (or falls back to localhost)
-const API_BASE = 'http://34.42.13.17:8080';
+const API_BASE = 'http://34.42.13.17:80';
 
 interface Metadata {
   detail?: string;
