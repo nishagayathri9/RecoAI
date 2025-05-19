@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent } from 'react';
 
 // Reads your API server URL from .env.local (or falls back to localhost)
-const API_BASE = 'https://recoai-service-571665774793.us-central1.run.app/';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 interface Metadata {
   detail?: string;

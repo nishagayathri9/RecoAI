@@ -16,12 +16,15 @@ EMB_DIM, META_DIM, HIDDEN_DIM = 16, 1546, 64
 
 app = FastAPI(
     title="RecoAI",
-    version="0.1.1",    # ← bump your API version here
+    version="0.1.2",    # ←  API version here
 )
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=["http://localhost:5173"],  # your front-end origin
+  allow_origins=[
+    "http://localhost:5173",                           # Next.js dev
+    "https://reco-ai-fyp.vercel.app/",                 # yor Vercel front-end
+  ],
   allow_methods=["*"],
   allow_headers=["*"],
 )
