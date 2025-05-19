@@ -155,8 +155,9 @@ recs = hybrid_topk_recommendation(
 )
 
 
-#show past purchases first and then 
 
+
+#show past purchases first and then 
 
 
 for r in recs:
