@@ -1,13 +1,11 @@
 # api/index.py
 
-from fastapi import FastAPI
-from backend.main import app as reco_app
+import os
+import sys
 
-# Create a root FastAPI that mounts your existing app at /api
-app = FastAPI()
+# 1) Add project root to path so "backend" is importable
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, ROOT)
 
-# All requests to /api/* will go into your FastAPI code (upload, predict, etc.)
-app.mount("/api", reco_app)
-
-# Vercel looks for “handler” as the entrypoint
-handler = app
+# 2) Import the FastAPI app instance from backend/main.py
+from backend.main import app

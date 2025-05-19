@@ -5,6 +5,9 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+    "three/examples/jsm/*": ["node_modules/three-stdlib/*"]},
 
     /* Bundler mode */
     "moduleResolution": "bundler",

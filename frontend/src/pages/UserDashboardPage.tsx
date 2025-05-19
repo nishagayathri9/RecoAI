@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Upload, BarChart3, LineChart, Sigma, 
-  Database, Settings, Zap, ArrowRight,
-  Users, Activity, DownloadCloud
+import {
+  Upload, BarChart3, LineChart,
+  Database, Zap, ArrowRight, Users, Activity, DownloadCloud, Info
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -11,25 +10,147 @@ import { Link } from 'react-router-dom';
 import FileUploader from '../components/dashboard/FileUploader';
 import { DatasetFile } from '../types';
 
+// --- Product Recommendations Dashboard types/data ---
+type Product = {
+  id: string;
+  name: string;
+  category: string;
+  color: string;
+  date?: string;
+  score?: number;
+};
+
+const users = {
+  "User #BK30": {
+    purchases: [
+      { id: "HD450", name: "Wooden Coffee Table", category: "Furniture", color: "Brown", date: "12/03/2023" },
+      { id: "DC784", name: "Modern Desk Lamp", category: "Lighting", color: "White", date: "05/07/2023" },
+    ],
+    recommendations: [
+      { id: "SM012", name: "Smart LED Strip", category: "Home", color: "Multi-color", score: 90 },
+      { id: "PL890", name: "Indoor Plant Set", category: "Home", color: "Green", score: 78 },
+    ],
+  },
+  "User #XM13": {
+    purchases: [
+      { id: "XR890", name: "Gaming Laptop", category: "Electronics", color: "Black", date: "15/06/2023" },
+      { id: "WH225", name: "Wireless Headphones", category: "Audio", color: "Silver", date: "22/05/2023" },
+    ],
+    recommendations: [
+      { id: "RD873", name: "4K UltraWide Monitor", category: "Electronics", color: "Black", score: 85 },
+      { id: "MS351", name: "Mechanical Keyboard", category: "Accessories", color: "RGB", score: 80 },
+    ],
+  },
+  "User #FN91": {
+    purchases: [
+      { id: "FB920", name: "Smart Fitness Band", category: "Wearable", color: "Blue", date: "08/02/2023" },
+      { id: "YT995", name: "Yoga Mat", category: "Fitness", color: "Purple", date: "28/01/2023" },
+    ],
+    recommendations: [
+      { id: "GY101", name: "Adjustable Dumbbells", category: "Fitness", color: "Black", score: 88 },
+      { id: "BL856", name: "Blender Bottle", category: "Nutrition", color: "Transparent", score: 70 },
+    ],
+  },
+};
+
+type UserKey = keyof typeof users;
+
+// --- ProductRecommendationsDashboard Component ---
+const ProductRecommendationsDashboard: React.FC = () => {
+  const [selectedUser, setSelectedUser] = useState<UserKey>("User #BK30");
+
+  return (
+    <div className="bg-background-tertiary rounded-xl shadow-lg overflow-hidden w-full max-w-6xl mx-auto">
+      <div className="border-b border-white/10 p-6 flex justify-center items-center">
+        <h2 className="text-2xl font-semibold flex items-center">
+          <BarChart3 className="mr-3 h-6 w-6 text-primary" />
+          Product Recommendations
+        </h2>
+      </div>
+      <div className="p-6 flex flex-col md:flex-row gap-6">
+        {/* User Selector */}
+        <aside className="md:w-1/4 w-full">
+          <div className="bg-background rounded-xl p-4 flex flex-col gap-3 shadow">
+            <legend className="text-lg font-semibold mb-3 select-none">Choose Customer</legend>
+            {Object.keys(users).map((user) => (
+              <label key={user} className="relative group cursor-pointer">
+                <input
+                  type="radio"
+                  name="userSelection"
+                  value={user}
+                  checked={selectedUser === user}
+                  onChange={() => setSelectedUser(user as UserKey)}
+                  className="peer hidden"
+                />
+                <div
+                  className={`h-12 flex items-center gap-3 px-3 rounded-lg transition 
+                    ${selectedUser === user
+                      ? "text-primary bg-primary/10 ring-1 ring-primary"
+                      : "hover:bg-white/5 text-white/90"
+                  }`}
+                >
+                  <span className="font-medium select-none">{user}</span>
+                  <div className="ml-auto w-4 h-4 border-2 rounded-full flex items-center justify-center border-primary peer-checked:border-primary">
+                    <div className={`w-2 h-2 rounded-full transition-transform ${selectedUser === user ? "bg-primary scale-100" : "scale-0"}`} />
+                  </div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </aside>
+        {/* Purchases and Recommendations */}
+        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section className="bg-background rounded-xl p-6 shadow border border-white/10">
+            <h3 className="text-lg font-semibold mb-4">Purchases</h3>
+            {users[selectedUser].purchases.map((product: Product) => (
+              <div key={product.id} className="flex flex-col bg-background-secondary p-4 rounded-lg mb-3 border border-white/10">
+                <h4 className="font-semibold">{product.name}</h4>
+                <p className="text-sm text-white/70">ID: #{product.id}</p>
+                <p className="text-sm text-white/70">Category: {product.category}</p>
+                <p className="text-sm text-white/70">Color: {product.color}</p>
+                <p className="text-sm text-white/70">Purchase Date: {product.date}</p>
+              </div>
+            ))}
+          </section>
+          <section className="bg-background rounded-xl p-6 shadow border border-white/10">
+            <h3 className="text-lg font-semibold mb-4">Recommendations</h3>
+            {users[selectedUser].recommendations.map((product: Product) => (
+              <div key={product.id} className="flex flex-col bg-background-secondary p-4 rounded-lg mb-3 border border-white/10">
+                <h4 className="font-semibold">{product.name}</h4>
+                <p className="text-sm text-white/70">ID: #{product.id}</p>
+                <p className="text-sm text-white/70">Category: {product.category}</p>
+                <p className="text-sm text-white/70">Color: {product.color}</p>
+                <p className="text-sm text-white/70 font-semibold mt-2 mb-2">Recommendation Score</p>
+                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden mb-1">
+                  <div className="bg-primary h-2" style={{ width: `${product.score ?? 0}%` }}></div>
+                </div>
+                <p className="text-sm font-semibold text-primary">{product.score}%</p>
+              </div>
+            ))}
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Main Dashboard Page ---
 const UserDashboardPage: React.FC = () => {
   const [files, setFiles] = useState<DatasetFile[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingComplete, setProcessingComplete] = useState(false);
-  
+
   useEffect(() => {
     document.title = 'User Dashboard - RecoAI';
   }, []);
-  
+
   const handleFilesAccepted = (newFiles: DatasetFile[]) => {
     setFiles(newFiles);
   };
-  
+
   const handleProcessDataset = () => {
     if (files.length === 0) return;
-    
     setIsProcessing(true);
-    
-    // Simulate processing time
     setTimeout(() => {
       setIsProcessing(false);
       setProcessingComplete(true);
@@ -42,7 +163,6 @@ const UserDashboardPage: React.FC = () => {
       <section className="section bg-background-secondary relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background to-background-secondary"></div>
         <div className="absolute inset-0 bg-[linear-gradient(rgba(5,5,5,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(5,5,5,0.7)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-        
         <div className="container-custom relative">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
@@ -54,8 +174,7 @@ const UserDashboardPage: React.FC = () => {
                 Your <span className="gradient-text">Recommendation</span> Dashboard
               </h1>
             </motion.div>
-            
-            <motion.p 
+            <motion.p
               className="text-xl text-white/80 mb-8 leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -67,7 +186,7 @@ const UserDashboardPage: React.FC = () => {
           </div>
         </div>
       </section>
-      
+
       {/* Upload Section */}
       <section className="section bg-background relative">
         <div className="container-custom">
@@ -79,14 +198,12 @@ const UserDashboardPage: React.FC = () => {
                   Upload Your Dataset
                 </h2>
               </div>
-              
               <div className="p-6">
                 <div className="space-y-6">
                   <p className="text-white/70">
-                    Upload your product or user interaction dataset to generate recommendations and 
+                    Upload your product or user interaction dataset to generate recommendations and
                     visualizations. We support CSV and JSON formats.
                   </p>
-                  
                   <div className="bg-background rounded-lg p-5 border border-white/10">
                     <h3 className="font-medium mb-3">Required Format</h3>
                     <div className="space-y-3">
@@ -99,17 +216,15 @@ const UserDashboardPage: React.FC = () => {
                       <div>
                         <h4 className="font-medium text-sm">User Interaction Dataset:</h4>
                         <p className="text-white/70 text-sm">
-                          Must include user IDs, product IDs, interaction types (view, purchase, etc.), 
+                          Must include user IDs, product IDs, interaction types (view, purchase, etc.),
                           and timestamps.
                         </p>
                       </div>
                     </div>
                   </div>
-                  
                   <FileUploader onFilesAccepted={handleFilesAccepted} />
-                  
                   <div className="flex justify-end">
-                    <button 
+                    <button
                       className={`btn-primary ${files.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={handleProcessDataset}
                       disabled={files.length === 0 || isProcessing}
@@ -133,9 +248,10 @@ const UserDashboardPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
+            {/* Recommendation Dashboard */}
             {processingComplete && (
-              <motion.div 
+              <motion.div
                 className="mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -148,7 +264,6 @@ const UserDashboardPage: React.FC = () => {
                       Your Recommendation Dashboard
                     </h2>
                   </div>
-                  
                   <div className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                       <div className="bg-background rounded-lg p-5 text-center">
@@ -156,126 +271,83 @@ const UserDashboardPage: React.FC = () => {
                         <div className="text-2xl font-bold mb-1">732</div>
                         <div className="text-white/70 text-sm">Users Analyzed</div>
                       </div>
-                      
                       <div className="bg-background rounded-lg p-5 text-center">
                         <Database className="h-8 w-8 text-secondary mx-auto mb-2" />
                         <div className="text-2xl font-bold mb-1">1,248</div>
                         <div className="text-white/70 text-sm">Products Processed</div>
                       </div>
-                      
                       <div className="bg-background rounded-lg p-5 text-center">
                         <Activity className="h-8 w-8 text-accent mx-auto mb-2" />
                         <div className="text-2xl font-bold mb-1">15,932</div>
                         <div className="text-white/70 text-sm">Interactions Mapped</div>
                       </div>
                     </div>
-                    
                     <div className="space-y-6">
+                      {/* New Metrics Section */}
                       <div className="bg-background rounded-lg p-5 border border-white/10">
                         <h3 className="font-medium mb-3 flex items-center">
                           <LineChart className="h-5 w-5 mr-2 text-primary" />
                           Recommendation Metrics
                         </h3>
-                        
                         <div className="space-y-4">
+                          {/* Recommendation Accuracy */}
                           <div>
-                            <div className="flex justify-between mb-1">
-                              <span className="text-sm text-white/70">Recommendation Precision</span>
-                              <span className="text-sm font-medium">87%</span>
+                            <div className="flex justify-between mb-1 items-center">
+                              <span className="text-sm text-white/70 flex items-center">
+                                Recommendation Accuracy
+                                <div className="relative group ml-2 flex items-center">
+                                  <button
+                                    type="button"
+                                    tabIndex={0}
+                                    aria-label="What is Recommendation Accuracy?"
+                                    className="focus:outline-none"
+                                  >
+                                    <Info className="h-4 w-4 text-accent cursor-pointer group-hover:text-primary group-focus:text-primary transition" />
+                                  </button>
+                                  <div className="opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition absolute z-10 left-1/2 -translate-x-1/2 mt-2 w-60 p-3 rounded bg-background-secondary border border-white/20 text-xs text-white shadow-lg">
+                                    <b>Accuracy</b> measures the percentage of correct recommendations out of all predictions. High accuracy means your users are more likely to see relevant items.
+                                  </div>
+                                </div>
+                              </span>
+                              <span className="text-sm font-medium">91%</span>
                             </div>
                             <div className="w-full bg-background-tertiary rounded-full h-2">
-                              <div className="bg-primary h-2 rounded-full" style={{ width: '87%' }}></div>
+                              <div className="bg-primary h-2 rounded-full" style={{ width: '91%' }}></div>
                             </div>
                           </div>
-                          
+                          {/* Recommendation AUC */}
                           <div>
-                            <div className="flex justify-between mb-1">
-                              <span className="text-sm text-white/70">Recommendation Recall</span>
-                              <span className="text-sm font-medium">82%</span>
+                            <div className="flex justify-between mb-1 items-center">
+                              <span className="text-sm text-white/70 flex items-center">
+                                Recommendation AUC
+                                <div className="relative group ml-2 flex items-center">
+                                  <button
+                                    type="button"
+                                    tabIndex={0}
+                                    aria-label="What is Recommendation AUC?"
+                                    className="focus:outline-none"
+                                  >
+                                    <Info className="h-4 w-4 text-accent cursor-pointer group-hover:text-primary group-focus:text-primary transition" />
+                                  </button>
+                                  <div className="opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition absolute z-10 left-1/2 -translate-x-1/2 mt-2 w-60 p-3 rounded bg-background-secondary border border-white/20 text-xs text-white shadow-lg">
+                                    <b>AUC</b> (Area Under Curve) measures how well the model ranks relevant items above irrelevant ones. Higher AUC means your recommendations are better at prioritizing items users will actually like.
+                                  </div>
+                                </div>
+                              </span>
+                              <span className="text-sm font-medium">0.94</span>
                             </div>
                             <div className="w-full bg-background-tertiary rounded-full h-2">
-                              <div className="bg-secondary h-2 rounded-full" style={{ width: '82%' }}></div>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <div className="flex justify-between mb-1">
-                              <span className="text-sm text-white/70">F1 Score</span>
-                              <span className="text-sm font-medium">84%</span>
-                            </div>
-                            <div className="w-full bg-background-tertiary rounded-full h-2">
-                              <div className="bg-accent h-2 rounded-full" style={{ width: '84%' }}></div>
+                              <div className="bg-secondary h-2 rounded-full" style={{ width: '94%' }}></div>
                             </div>
                           </div>
                         </div>
                       </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-background rounded-lg p-5 border border-white/10">
-                          <h3 className="font-medium mb-3 flex items-center">
-                            <Sigma className="h-5 w-5 mr-2 text-primary" />
-                            Model Details
-                          </h3>
-                          
-                          <div className="space-y-2">
-                            <div className="flex justify-between">
-                              <span className="text-white/70">Algorithm</span>
-                              <span>Matrix Factorization</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-white/70">Embedding Size</span>
-                              <span>128</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-white/70">Learning Rate</span>
-                              <span>0.01</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-white/70">Regularization</span>
-                              <span>0.001</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-background rounded-lg p-5 border border-white/10">
-                          <h3 className="font-medium mb-3 flex items-center">
-                            <Settings className="h-5 w-5 mr-2 text-primary" />
-                            Visualization Settings
-                          </h3>
-                          
-                          <div className="space-y-3">
-                            <div>
-                              <label className="text-sm text-white/70 block mb-1">UMAP Neighbors</label>
-                              <input 
-                                type="range" 
-                                min="5" 
-                                max="50" 
-                                defaultValue="15" 
-                                className="w-full" 
-                              />
-                            </div>
-                            
-                            <div>
-                              <label className="text-sm text-white/70 block mb-1">UMAP Min Distance</label>
-                              <input 
-                                type="range" 
-                                min="0.1" 
-                                max="1" 
-                                step="0.1" 
-                                defaultValue="0.5" 
-                                className="w-full" 
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
+                      {/* Buttons */}
                       <div className="flex flex-col sm:flex-row gap-4">
                         <Link to="/playground" className="btn-primary flex-1 justify-center">
                           View 3D Visualization
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
-                        
                         <button className="btn-outline flex-1 justify-center">
                           <DownloadCloud className="mr-2 h-5 w-5" />
                           Export Recommendations
@@ -286,16 +358,28 @@ const UserDashboardPage: React.FC = () => {
                 </div>
               </motion.div>
             )}
+
+            {/* --- Product Recommendations Section --- */}
+            {processingComplete && (
+              <motion.div
+                className="mt-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <ProductRecommendationsDashboard />
+              </motion.div>
+            )}
+
           </div>
         </div>
       </section>
-      
+
       {/* API Integration Section */}
       {processingComplete && (
         <section className="section bg-background-tertiary relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -z-10"></div>
-          
           <div className="container-custom">
             <div className="max-w-4xl mx-auto">
               <motion.div
@@ -309,16 +393,14 @@ const UserDashboardPage: React.FC = () => {
                   API <span className="gradient-text">Integration</span>
                 </h2>
                 <p className="text-lg text-white/70 leading-relaxed">
-                  Integrate your personalized recommendation model into your 
+                  Integrate your personalized recommendation model into your
                   applications with our easy-to-use API.
                 </p>
               </motion.div>
-              
               <div className="bg-background rounded-xl shadow-lg overflow-hidden">
                 <div className="border-b border-white/10 p-6">
                   <h3 className="text-xl font-semibold">API Endpoints</h3>
                 </div>
-                
                 <div className="p-6">
                   <div className="space-y-6">
                     <div>
@@ -330,7 +412,6 @@ const UserDashboardPage: React.FC = () => {
                         <code>https://api.recoai.com/v1/recommendations/user/{`{user_id}`}</code>
                       </div>
                     </div>
-                    
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <h4 className="font-medium">Get Similar Products</h4>
@@ -340,7 +421,6 @@ const UserDashboardPage: React.FC = () => {
                         <code>https://api.recoai.com/v1/recommendations/product/{`{product_id}`}/similar</code>
                       </div>
                     </div>
-                    
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <h4 className="font-medium">Record User Interaction</h4>
@@ -350,7 +430,6 @@ const UserDashboardPage: React.FC = () => {
                         <code>https://api.recoai.com/v1/interactions</code>
                       </div>
                     </div>
-                    
                     <button className="w-full btn-outline">
                       View Complete API Documentation
                     </button>
@@ -361,13 +440,12 @@ const UserDashboardPage: React.FC = () => {
           </div>
         </section>
       )}
-      
+
       {/* CTA Section */}
       <section className="py-24 bg-background relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(5,5,5,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(5,5,5,0.7)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_40%,transparent_100%)]"></div>
-        
         <div className="container-custom relative">
-          <motion.div 
+          <motion.div
             className="max-w-3xl mx-auto text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -378,7 +456,7 @@ const UserDashboardPage: React.FC = () => {
               Ready to <span className="gradient-text">Transform</span> Your Shopping Experience?
             </h2>
             <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
-              Start implementing our recommendation system today and see how it can 
+              Start implementing our recommendation system today and see how it can
               improve customer engagement and increase your sales.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">

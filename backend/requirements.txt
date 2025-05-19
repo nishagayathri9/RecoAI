@@ -1,6 +1,0 @@
-fastapi
-uvicorn[standard]
-torch
-pydantic
-pandas
-python-multipart

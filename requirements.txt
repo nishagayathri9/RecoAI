@@ -5,8 +5,9 @@ nltk
 sentence-transformers   # if you still preprocess embeddings on the fly
 requests                # if you keep test_api.py
 fastapi
-uvicorn[standard]
+uvicorn
 torch
 pydantic
 pandas
 python-multipart
+
