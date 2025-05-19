@@ -9,6 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.model import HybridDeepFM
 from typing import List, Optional
+from backend.top_k import hybrid_topk_recommendation
+from backend.preprocessing import RecommenderDataModule, Preprocessing
+
+
 
 # ─── Model hyperparams ─────────────────────────────────────────────────────
 EMB_DIM, META_DIM, HIDDEN_DIM = 64, 2314, 96
@@ -96,25 +100,78 @@ async def upload(data_file: UploadFile = File(...)):
     }
 
 # ─── Data Preprocessing ─────────────────────────────────────────────────
+
+@app.post("/upload/")
+async def upload(data_file: UploadFile = File(...)):
+    # 1) Read CSV
+    global RAW_DF
+    try:
+        df = pd.read_csv(data_file.file)
+    except Exception as e:
+        raise HTTPException(400, f"Could not read CSV: {e}")
+
+    # 2) Check for missing features
+    actual = set(df.columns)
+    missing = FEATURES - actual
+    if missing:
+        raise HTTPException(
+            400,
+            {
+                "detail": "Missing required features",
+                "missing_features": sorted(missing),
+                "required_features": sorted(FEATURES)
+            }
+        )
+    
+    RAW_DF = df
+    # 3) All required columns are there—return success with the list
+    return {
+        "detail": "All required features present",
+        "features": sorted(actual)
+    }
+
+# ─── Data Preprocessing ─────────────────────────────────────────────────
 @app.post("/preprocess/")
 async def preprocess():
     """
     Placeholder for your real preprocessing logic.
     It will get handed the raw DataFrame you just uploaded.
     """
-    if RAW_DF is None:
+    global DF_TEST
+    global X_TEST_META
+
+    if RAW_DF is None: 
         raise HTTPException(400, "No data uploaded yet; call /upload/ first")
 
     # TODO: your real preprocessing steps here
-    # e.g.:
-    # df = RAW_DF.copy()
-    # df['some_new_col'] = ...
-    #
-    # For now, just echo back the shape:
+    pre = Preprocessing(RAW_DF)
+    df_processed, embeddings_list = pre.run()
+    
+    if df_processed is None or df_processed.empty:
+        raise HTTPException(500, "Preprocessing returned an empty DataFrame")
+    if not isinstance(embeddings_list, list) or len(embeddings_list) == 0:
+        raise HTTPException(500, "Preprocessing returned no embeddings")
+
+    # 2) Split & load
+    data_module = RecommenderDataModule(
+        df           = df_processed,
+        embeddings_list = [emb for key, emb in embeddings_list],
+        batch_size   = 512
+    )
+
+    data_module.setup()
+    train_loader, val_loader, test_loader = data_module.get_loaders()
+    df_test, X_test_meta = data_module.get_test_split()
+    
+    DF_TEST  = df_test
+    X_TEST_META =  X_test_meta
     return {
-        "detail": "Preprocessing placeholder – no changes made yet",
+        "detail": "Data is Preprocessed",
         "original_shape": RAW_DF.shape,
     }
+
+
+
 
 # ─── Prediction Endpoint ───────────────────────────────────────────────────
 class PredictRequest(BaseModel):
@@ -152,26 +209,59 @@ def predict(req: PredictRequest):
         raise HTTPException(500, f"Inference failed: {e}")
 
 # ─── Top K ───────────────────────────────────────────────────
+
+DF_INTERACTIONS = None
+META_MATRIX = None
+ITEM_TITLE_MAP = None
+ITEM_EMBEDDINGS = None
+
+
+DF_INTERACTIONS = DF_TEST
+META_MATRIX = X_TEST_META
+ITEM_TITLE_MAP = dict(zip(DF_INTERACTIONS['product_id'], DF_INTERACTIONS['product_title']))
+with torch.no_grad():
+    ITEM_EMBEDDINGS = MODEL.cf.item_emb.weight.detach().cpu().numpy()
+
+
 @app.get("/interpret/")
 def interpret(
     u_idx: int = Query(..., description="User ID to interpret recommendations for"),
-    k: int = Query(10, gt=0, description="Number of top items to return")
+    k: int = Query(10, gt=0, description="Number of top items to return"),
+    top_n_users: int = Query(10, gt=0, description="Number of similar users to consider for CF-KNN")
 ):
-    if USER_META is None or ITEM_META is None:
-        raise HTTPException(503, "Upload metadata first via /upload/")
-    if u_idx not in USER_META:
-        raise HTTPException(400, f"User ID {u_idx} not found")
+  
+    if any(x is None for x in [MODEL, DF_INTERACTIONS, META_MATRIX, ITEM_TITLE_MAP, ITEM_EMBEDDINGS]):
+        raise HTTPException(503, "Model or metadata not loaded. Please call /load_full and /retrain first.")
+    
+    if u_idx not in DF_INTERACTIONS['u_idx'].values:
+        raise HTTPException(400, f"User ID {u_idx} not found in dataset.")
 
-    # ─── Placeholder logic ─────────────────────────────────────────────────
-    # TODO: replace with real scoring and sorting
-    # e.g. scores = model.score_all_items_for_user(u_idx)
-    #      top_items = sorted(scores.items(), key=lambda x: -x[1])[:k]
-    recommendations = [{"item_id": iid, "score": None} for iid in range(k)]
+  
+    user_purchases_df = DF_INTERACTIONS[DF_INTERACTIONS['u_idx'] == u_idx]
+    user_history = dict(zip(user_purchases_df['product_id'], user_purchases_df['product_title']))
+
+
+    recs = hybrid_topk_recommendation(
+        model=MODEL,
+        user_id=u_idx,
+        df=DF_INTERACTIONS,
+        meta_features_all=META_MATRIX,
+        product_title_map=ITEM_TITLE_MAP,
+        item_embeddings=ITEM_EMBEDDINGS,
+        deepfm_weight=0.8,
+        knn_weight=0.2,
+        top_n_users=top_n_users,    
+        top_k_items=k
+    )
 
     return {
-        "detail": f"Top {k} recommendations for user {u_idx} (placeholder)",
-        "recommendations": recommendations
+        "user_id": u_idx,
+        "top_k": k,
+        "top_n_users": top_n_users,
+        "recommendations": recs,
+        "user_history": user_history  
     }
+
 
 
 # ─── Run Server ────────────────────────────────────────────────────────────

@@ -137,32 +137,9 @@ def hybrid_topk_recommendation(
 
     return sorted(recs, key=lambda x: x['final_score'], reverse=True)[:top_k_items]
 
-### HOW WE R CALLING THE FUNCTION 
-product_title_map = dict(zip(df_test1['product_id'], df_test1['product_title']))
-with torch.no_grad():
-    item_embedding_weights = model.cf.item_emb.weight.detach().cpu().numpy()
-
-recs = hybrid_topk_recommendation(
-    model=model,
-    user_id=5,
-    df=df_test1,
-    meta_features_all=X_meta,
-    product_title_map=product_title_map,
-    item_embeddings=item_embedding_weights,
-    deepfm_weight=0.8,
-    knn_weight=0.1,
-    top_k_items=5
-)
 
 
 
 
-#show past purchases first and then 
 
 
-for r in recs:
-    print(f"\n🔹 {r['title']}")
-    print(f"   ASIN: {r['asin']} | DeepFM: {r['deepfm_score']} | CF: {r['knn_score']} | Final: {r['final_score']}")
-    print(f"   Most similar past purchases:")
-    for t in r['top5_related_past_titles']:
-        print(f"   - {t}")
