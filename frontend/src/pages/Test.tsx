@@ -5,6 +5,8 @@ import React, { useState, ChangeEvent } from 'react';
 // Reads your API server URL from .env.local (or falls back to localhost)
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
+console.log("API_BASE is:", API_BASE); 
+
 interface Metadata {
   detail?: string;
   num_users: number;
