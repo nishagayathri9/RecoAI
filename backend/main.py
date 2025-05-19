@@ -6,7 +6,7 @@ import pandas as pd
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from model import DeepFM
+from backend.model import DeepFM
 from typing import List, Optional
 
 # ─── Model hyperparams (must match training) ────────────────────────────────
