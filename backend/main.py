@@ -13,7 +13,7 @@ from backend.model import HybridDeepFM, safe_load_pretrained
 from typing import List, Optional
 
 # ─── Model hyperparams ─────────────────────────────────────────────────────
-EMB_DIM, META_DIM, HIDDEN_DIM = 16, 1546, 64
+EMB_DIM, META_DIM, HIDDEN_DIM = 64, 2314, 96
 MAX_SEQ_LEN = 50
 
 # ─── FastAPI App Config ────────────────────────────────────────────────────
