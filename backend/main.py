@@ -23,7 +23,7 @@ app.add_middleware(
   CORSMiddleware,
   allow_origins=[
     "http://localhost:3000",                                 # Next.js dev
-    "https://recoai-ui.vercel.app",                          # YOUR VERCEL FRONTEND
+    "https://recoai-fyp.vercel.app",                          # YOUR VERCEL FRONTEND
     "https://recoai-service-571665774793.us-central1.run.app" # your Cloud Run API docs/origin
   ],
   allow_methods=["*"],
