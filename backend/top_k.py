@@ -154,6 +154,11 @@ recs = hybrid_topk_recommendation(
     top_k_items=5
 )
 
+
+#show past purchases first and then 
+
+
+
 for r in recs:
     print(f"\n🔹 {r['title']}")
     print(f"   ASIN: {r['asin']} | DeepFM: {r['deepfm_score']} | CF: {r['knn_score']} | Final: {r['final_score']}")
