@@ -1,10 +1,9 @@
-
 import pandas as pd
 import numpy as np
 import re
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sentence_transformers import SentenceTransformer
-from fuzzywuzzy import process
+# from fuzzywuzzy import process
 from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
 import numpy as np
@@ -41,37 +40,37 @@ class Preprocessing:
           }
         self.matched_cols = {}
         self.used_columns = set()
-        self._identify_columns()
+        # self._identify_columns()
         self.embeddings = {}
 
-    def _fuzzy_match(self, candidates):
-        """Find the best fuzzy match among unused DataFrame columns."""
-        best_match = None
-        best_score = 0
+    # def _fuzzy_match(self, candidates):
+    #     """Find the best fuzzy match among unused DataFrame columns."""
+    #     best_match = None
+    #     best_score = 0
 
-        available_columns = [col for col in self.df.columns if col not in self.used_columns]
+    #     available_columns = [col for col in self.df.columns if col not in self.used_columns]
 
-        for name in candidates:
-            match, score = process.extractOne(name, available_columns)
-            if score > best_score:
-                best_match = match
-                best_score = score
+    #     for name in candidates:
+    #         match, score = process.extractOne(name, available_columns)
+    #         if score > best_score:
+    #             best_match = match
+    #             best_score = score
 
-        if best_score >= 80:
-            self.used_columns.add(best_match)
-            return best_match
-        else:
-            return None
+    #     if best_score >= 80:
+    #         self.used_columns.add(best_match)
+    #         return best_match
+    #     else:
+    #         return None
 
-    def _identify_columns(self):
-        # print("[INFO] Matching required columns (no duplicates)...")
-        for key, options in self.required_cols.items():
-            matched = self._fuzzy_match(options)
-            if matched:
-                self.matched_cols[key] = matched
-                print(f"[INFO] Matched '{key}' to column: '{matched}'")
-            # else:
-            #     print(f"[WARN] No match found for '{key}'.")
+    # def _identify_columns(self):
+    #     # print("[INFO] Matching required columns (no duplicates)...")
+    #     for key, options in self.required_cols.items():
+    #         matched = self._fuzzy_match(options)
+    #         if matched:
+    #             self.matched_cols[key] = matched
+    #             print(f"[INFO] Matched '{key}' to column: '{matched}'")
+    #         # else:
+    #         #     print(f"[WARN] No match found for '{key}'.")
 
 
     def _drop_nulls_duplicates(self):
