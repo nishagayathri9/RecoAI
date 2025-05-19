@@ -1,0 +1,7 @@
+[
+  {"id": 1, "name": "Men's T-Shirt", "x": 2.5, "y": 5.1, "z": -3.2, "cluster": 0, "category": "Clothing"},
+  {"id": 2, "name": "Wireless Headphones", "x": -5.8, "y": 2.9, "z": 6.7, "cluster": 1, "category": "Electronics"},
+  {"id": 3, "name": "Decorative Pillow", "x": 7.2, "y": -4.3, "z": 1.8, "cluster": 2, "category": "Home Goods"},
+  {"id": 4, "name": "Running Shoes", "x": 3.6, "y": 8.4, "z": -2.7, "cluster": 3, "category": "Sports"},
+  {"id": 5, "name": "Face Moisturizer", "x": -6.1, "y": -7.5, "z": -5.3, "cluster": 4, "category": "Beauty"}
+]

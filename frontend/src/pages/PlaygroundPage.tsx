@@ -7,37 +7,40 @@ import {
 import { Link } from 'react-router-dom';
 
 // Components
-import ScatterPlot3D from '../components/playground/ScatterPlot3D';
+import ScatterPlot3D, { ScatterPlot3DHandle } from '../components/playground/ScatterPlot3D';
 import ControlPanel from '../components/playground/ControlPanel';
-import { DataPoint } from '../types';
 
 const PlaygroundPage: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const ref3dView = useRef<HTMLDivElement>(null);
-
+  const plotRef = useRef<ScatterPlot3DHandle>(null);
+  
   useEffect(() => {
     document.title = 'Interactive Playground - RecoAI';
   }, []);
   
-  // These functions would connect to the Three.js component in a real implementation
   const handleReset = () => {
-    console.log('Reset visualization');
+    plotRef.current?.resetView();
   };
   
   const handleZoomIn = () => {
-    console.log('Zoom in');
+    plotRef.current?.zoomIn();
   };
   
   const handleZoomOut = () => {
-    console.log('Zoom out');
+    plotRef.current?.zoomOut();
   };
   
   const handleRotate = () => {
-    console.log('Rotate');
+    plotRef.current?.toggleRotate();
+  };
+  
+  const handleMoveCamera = (direction: 'left' | 'right' | 'up' | 'down') => {
+    plotRef.current?.moveCamera(direction);
   };
   
   const handleSearch = (term: string) => {
-    console.log('Search for:', term);
+    plotRef.current?.searchProduct(term);
   };
   
   const toggleFullscreen = () => {
@@ -89,7 +92,7 @@ const PlaygroundPage: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               Explore the multi-dimensional space of product embeddings and see how our 
-              recommendation system connects similar items.
+              recommendation system connects similar items. Use keyboard controls or the control panel.
             </motion.p>
           </div>
         </div>
@@ -109,10 +112,10 @@ const PlaygroundPage: React.FC = () => {
                     <Maximize2 className="h-5 w-5" />
                   </button>
                 </div>
-                <ScatterPlot3D height="600px" />
+                <ScatterPlot3D height="600px" ref={plotRef} />
               </div>
               
-              <div className="mt-6 bg-background-tertiary rounded-xl p-5">
+              <div className="mt-6 bg-background-tertiary rounded-xl p-5 border border-white/10">
                 <h3 className="text-xl font-semibold flex items-center mb-4">
                   <LayoutGrid className="mr-2 h-5 w-5 text-primary" />
                   Product Insights
@@ -243,10 +246,12 @@ const PlaygroundPage: React.FC = () => {
                 onZoomIn={handleZoomIn}
                 onZoomOut={handleZoomOut}
                 onRotate={handleRotate}
+                onMoveCamera={handleMoveCamera}
                 onSearch={handleSearch}
+                plotRef={plotRef}
               />
               
-              <div className="mt-6 bg-background-tertiary rounded-xl p-5">
+              <div className="mt-6 bg-background-tertiary rounded-xl p-5 border border-white/10">
                 <h3 className="text-xl font-semibold flex items-center mb-4">
                   <FileSpreadsheet className="mr-2 h-5 w-5 text-primary" />
                   My Datasets
@@ -289,7 +294,7 @@ const PlaygroundPage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="bg-background rounded-xl p-6">
+              <div className="bg-background rounded-xl p-6 border border-white/10">
                 <h3 className="text-xl font-semibold mb-4">What Am I Looking At?</h3>
                 <p className="text-white/70 leading-relaxed">
                   The 3D visualization represents product embeddings in a multi-dimensional space. 
@@ -298,7 +303,7 @@ const PlaygroundPage: React.FC = () => {
                 </p>
               </div>
               
-              <div className="bg-background rounded-xl p-6">
+              <div className="bg-background rounded-xl p-6 border border-white/10">
                 <h3 className="text-xl font-semibold mb-4">Color Coding</h3>
                 <p className="text-white/70 leading-relaxed mb-4">
                   Colors represent different product categories:
@@ -327,7 +332,7 @@ const PlaygroundPage: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-background rounded-xl p-6">
+              <div className="bg-background rounded-xl p-6 border border-white/10">
                 <h3 className="text-xl font-semibold mb-4">Behind the Scenes</h3>
                 <p className="text-white/70 leading-relaxed">
                   This visualization is created using the UMAP (Uniform Manifold Approximation and Projection) 
