@@ -59,38 +59,72 @@ def load_model():
     print(f"\u2705 Loaded model from {ckpt}")
 
 # ─── Upload Metadata Endpoint ──────────────────────────────────────────────
+FEATURES = {
+    'price_scaled',
+    'sentiment',
+    'color_encoded',
+    'material_encoded',
+    'user_id',
+    'product_id',
+    'rating',
+    'product_title'
+}
+
 @app.post("/upload/")
-async def upload(
-    user_file: UploadFile = File(...),
-    item_file: UploadFile = File(...)
-):
+async def upload(data_file: UploadFile = File(...)):
     global USER_META, ITEM_META, NUM_USERS, NUM_ITEMS
 
+    # 1) Read CSV
     try:
-        u_df = pd.read_csv(user_file.file).set_index("id")
-        i_df = pd.read_csv(item_file.file).set_index("id")
+        df = pd.read_csv(data_file.file)
     except Exception as e:
-        raise HTTPException(400, f"Could not read CSVs: {e}")
+        raise HTTPException(400, f"Could not read CSV: {e}")
 
-    u_feats = u_df.shape[1]
-    i_feats = i_df.shape[1]
-    if u_feats + i_feats != META_DIM:
-        raise HTTPException(400, f"Feature dim mismatch: user {u_feats} + item {i_feats} != {META_DIM}")
+    # 2) Check columns exactly match FEATURES
+    actual = set(df.columns)
+    missing = FEATURES - actual
+    extra   = actual - FEATURES
+    if missing or extra:
+        errors = []
+        if missing:
+            errors.append(f"Missing columns: {sorted(missing)}")
+        if extra:
+            errors.append(f"Unexpected columns: {sorted(extra)}")
+        raise HTTPException(400, "Column mismatch – " + "; ".join(errors))
 
+    # 3) (Re)build your metadata structures however you need them.
+    #    For example, if you still want USER_META and ITEM_META dicts:
     try:
-        USER_META = u_df.astype(float).T.to_dict(orient="list")
-        ITEM_META = i_df.astype(float).T.to_dict(orient="list")
-        NUM_USERS = u_df.index.max() + 1
-        NUM_ITEMS = i_df.index.max() + 1
+        # Assuming price_scaled, sentiment, color_encoded, material_encoded are item-level:
+        ITEM_META = (
+            df
+            .drop(columns=['user_id','rating','product_title'])
+            .drop_duplicates('product_id')
+            .set_index('product_id')
+            .astype(float)
+            .T
+            .to_dict(orient='list')
+        )
+        # And maybe user features are just the rating history?
+        USER_META = (
+            df[['user_id','product_id','rating']]
+            .groupby('user_id')
+            .apply(lambda d: d.sort_values('product_id')['rating'].tolist())
+            .to_dict()
+        )
+
+        NUM_USERS = max(df['user_id']) + 1
+        NUM_ITEMS = max(df['product_id']) + 1
         load_model()
     except Exception as e:
         raise HTTPException(500, f"Error processing metadata: {e}")
 
     return {
-        "detail": "Metadata uploaded successfully",
-        "num_users": len(USER_META),
-        "num_items": len(ITEM_META),
-        "meta_dim": META_DIM
+        "detail": "Dataset uploaded successfully",
+        "num_users": NUM_USERS,
+        "num_items": NUM_ITEMS,
+        "num_rows": len(df),
+        "columns": sorted(list(actual)),
     }
 
 # ─── Metadata Status Check ─────────────────────────────────────────────────
