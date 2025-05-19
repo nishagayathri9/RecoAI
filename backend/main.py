@@ -1,15 +1,13 @@
 # backend/main.py
 
 #new backend
-
-
 import os
 import torch
 import pandas as pd
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from backend.model import HybridDeepFM, safe_load_pretrained
+from backend.model import HybridDeepFM
 from typing import List, Optional
 
 # ─── Model hyperparams ─────────────────────────────────────────────────────
@@ -54,7 +52,6 @@ def load_model():
     if not os.path.isfile(ckpt):
         raise FileNotFoundError(f"Model checkpoint not found at {ckpt}")
     pretrained = torch.load(ckpt, map_location="cpu")
-    safe_load_pretrained(MODEL, pretrained, skip_embeddings=True)
     MODEL.eval()
     print(f"\u2705 Loaded model from {ckpt}")
 
