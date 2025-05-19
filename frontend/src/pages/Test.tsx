@@ -2,6 +2,9 @@
 
 import React, { useState, ChangeEvent } from 'react';
 
+// Reads your API server URL from .env.local (or falls back to localhost)
+const API_BASE = 'http://34.42.13.17:8080';
+
 interface Metadata {
   detail?: string;
   num_users: number;
@@ -27,7 +30,7 @@ const Test: React.FC = () => {
     form.append('item_file', itemFile);
 
     try {
-      const res = await fetch('http://localhost:8000/upload/', {
+      const res = await fetch(`${API_BASE}/upload/`, {
         method: 'POST',
         body: form,
       });
@@ -50,7 +53,7 @@ const Test: React.FC = () => {
       return;
     }
     try {
-      const res = await fetch('http://localhost:8000/predict/', {
+      const res = await fetch(`${API_BASE}/predict/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ u_idx: 0, i_idx: 0 }),
