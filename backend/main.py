@@ -4,7 +4,7 @@
 import os
 import torch
 import pandas as pd
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.model import HybridDeepFM
@@ -56,6 +56,7 @@ def load_model():
     print(f"\u2705 Loaded model from {ckpt}")
 
 # ─── Upload Metadata Endpoint ──────────────────────────────────────────────
+
 FEATURES = {
     'price_scaled',
     'sentiment',
@@ -69,70 +70,50 @@ FEATURES = {
 
 @app.post("/upload/")
 async def upload(data_file: UploadFile = File(...)):
-    global USER_META, ITEM_META, NUM_USERS, NUM_ITEMS
-
     # 1) Read CSV
     try:
         df = pd.read_csv(data_file.file)
     except Exception as e:
         raise HTTPException(400, f"Could not read CSV: {e}")
 
-    # 2) Check columns exactly match FEATURES
+    # 2) Check for missing features
     actual = set(df.columns)
     missing = FEATURES - actual
-    extra   = actual - FEATURES
-    if missing or extra:
-        errors = []
-        if missing:
-            errors.append(f"Missing columns: {sorted(missing)}")
-        if extra:
-            errors.append(f"Unexpected columns: {sorted(extra)}")
-        raise HTTPException(400, "Column mismatch – " + "; ".join(errors))
-
-    # 3) (Re)build your metadata structures however you need them.
-    #    For example, if you still want USER_META and ITEM_META dicts:
-    try:
-        # Assuming price_scaled, sentiment, color_encoded, material_encoded are item-level:
-        ITEM_META = (
-            df
-            .drop(columns=['user_id','rating','product_title'])
-            .drop_duplicates('product_id')
-            .set_index('product_id')
-            .astype(float)
-            .T
-            .to_dict(orient='list')
-        )
-        # And maybe user features are just the rating history?
-        USER_META = (
-            df[['user_id','product_id','rating']]
-            .groupby('user_id')
-            .apply(lambda d: d.sort_values('product_id')['rating'].tolist())
-            .to_dict()
+    if missing:
+        raise HTTPException(
+            400,
+            {
+                "detail": "Missing required features",
+                "missing_features": sorted(missing),
+                "required_features": sorted(FEATURES)
+            }
         )
 
-        NUM_USERS = max(df['user_id']) + 1
-        NUM_ITEMS = max(df['product_id']) + 1
-        load_model()
-    except Exception as e:
-        raise HTTPException(500, f"Error processing metadata: {e}")
-
+    # 3) All required columns are there—return success with the list
     return {
-        "detail": "Dataset uploaded successfully",
-        "num_users": NUM_USERS,
-        "num_items": NUM_ITEMS,
-        "num_rows": len(df),
-        "columns": sorted(list(actual)),
+        "detail": "All required features present",
+        "features": sorted(actual)
     }
 
-# ─── Metadata Status Check ─────────────────────────────────────────────────
-@app.get("/metadata/")
-def get_metadata():
-    if USER_META is None or ITEM_META is None:
-        raise HTTPException(503, "No metadata uploaded yet; POST to /upload/")
+# ─── Data Preprocessing ─────────────────────────────────────────────────
+@app.post("/preprocess/")
+async def preprocess():
+    """
+    Placeholder for your real preprocessing logic.
+    It will get handed the raw DataFrame you just uploaded.
+    """
+    if RAW_DF is None:
+        raise HTTPException(400, "No data uploaded yet; call /upload/ first")
+
+    # TODO: your real preprocessing steps here
+    # e.g.:
+    # df = RAW_DF.copy()
+    # df['some_new_col'] = ...
+    #
+    # For now, just echo back the shape:
     return {
-        "num_users": len(USER_META),
-        "num_items": len(ITEM_META),
-        "meta_dim": META_DIM
+        "detail": "Preprocessing placeholder – no changes made yet",
+        "original_shape": RAW_DF.shape,
     }
 
 # ─── Prediction Endpoint ───────────────────────────────────────────────────
@@ -169,6 +150,29 @@ def predict(req: PredictRequest):
         return {"score": score}
     except Exception as e:
         raise HTTPException(500, f"Inference failed: {e}")
+
+# ─── Top K ───────────────────────────────────────────────────
+@app.get("/interpret/")
+def interpret(
+    u_idx: int = Query(..., description="User ID to interpret recommendations for"),
+    k: int = Query(10, gt=0, description="Number of top items to return")
+):
+    if USER_META is None or ITEM_META is None:
+        raise HTTPException(503, "Upload metadata first via /upload/")
+    if u_idx not in USER_META:
+        raise HTTPException(400, f"User ID {u_idx} not found")
+
+    # ─── Placeholder logic ─────────────────────────────────────────────────
+    # TODO: replace with real scoring and sorting
+    # e.g. scores = model.score_all_items_for_user(u_idx)
+    #      top_items = sorted(scores.items(), key=lambda x: -x[1])[:k]
+    recommendations = [{"item_id": iid, "score": None} for iid in range(k)]
+
+    return {
+        "detail": f"Top {k} recommendations for user {u_idx} (placeholder)",
+        "recommendations": recommendations
+    }
+
 
 # ─── Run Server ────────────────────────────────────────────────────────────
 if __name__ == "__main__":
