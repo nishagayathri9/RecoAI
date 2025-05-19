@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 
 
-
 class AttentionUnit(nn.Module):
     def __init__(self, dim):
         super().__init__()
