@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Sliders, Search, Zap, RefreshCw, Download, 
-  Plus, Minus, RotateCw, Info, ArrowUp, ArrowDown,
-  ArrowLeft, ArrowRight, Eye, EyeOff, DownloadCloud
+import {
+  Sliders, Search, Zap, RefreshCw,
+  Plus, Minus, RotateCw, Info,
+  ArrowUp, ArrowDown, ArrowLeft, ArrowRight,
+  Eye, EyeOff
 } from 'lucide-react';
 import { ScatterPlot3DHandle } from './ScatterPlot3D';
 
@@ -17,6 +18,8 @@ interface ControlPanelProps {
   plotRef: React.RefObject<ScatterPlot3DHandle>;
 }
 
+type Tab = 'navigation' | 'filters';
+
 const ControlPanel: React.FC<ControlPanelProps> = ({
   onReset,
   onZoomIn,
@@ -29,25 +32,26 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   const [isAutoRotate, setIsAutoRotate] = useState(true);
-  const [activeTab, setActiveTab] = useState<'navigation' | 'filters' | 'data'>('navigation');
+  const [activeTab, setActiveTab] = useState<Tab>('navigation');
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+
+  // ────────────────────────────────────────────────────────────────────────────────
+  // Event handlers
+  // ────────────────────────────────────────────────────────────────────────────────
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchTerm) {
-      onSearch(searchTerm);
-    }
+    if (searchTerm) onSearch(searchTerm);
   };
-  
+
   const handleRotateToggle = () => {
     setIsAutoRotate(!isAutoRotate);
     onRotate();
   };
-  
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Only handle keys if we're not in an input field
+    // Skip shortcuts when typing in the search field
     if (e.target === searchInputRef.current) return;
-    
+
     switch (e.key) {
       case 'ArrowUp':
         onMoveCamera('up');
@@ -75,42 +79,51 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         break;
     }
   };
-  
+
   React.useEffect(() => {
-    // Add keyboard listener
     window.addEventListener('keydown', handleKeyDown as any);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown as any);
-    };
+    return () => window.removeEventListener('keydown', handleKeyDown as any);
   }, [isAutoRotate]);
-  
-  const handleExport = () => {
-    // In a real app, this would export the data
-    alert('Data export functionality would be implemented here');
-  };
-  
-  return (
-    <div 
-      className="bg-background-tertiary rounded-xl p-5 shadow-lg border border-white/10 backdrop-blur-sm"
-      tabIndex={0} // Make div focusable to capture key events
+
+  // ────────────────────────────────────────────────────────────────────────────────
+  // Render helpers
+  // ────────────────────────────────────────────────────────────────────────────────
+  const TabButton: React.FC<{ tab: Tab; label: string }> = ({ tab, label }) => (
+    <button
+      className={`px-4 py-2 text-sm font-medium ${
+        activeTab === tab
+          ? 'text-primary border-b-2 border-primary'
+          : 'text-white/70 hover:text-white'
+      }`}
+      onClick={() => setActiveTab(tab)}
     >
+      {label}
+    </button>
+  );
+
+  return (
+    <div
+      className="bg-background-tertiary rounded-xl p-5 shadow-lg border border-white/10 backdrop-blur-sm"
+      tabIndex={0}
+    >
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold flex items-center">
           <Sliders className="mr-2 h-5 w-5 text-primary" />
           Control Panel
         </h3>
-        <button 
+        <button
           className="text-white/70 hover:text-white transition-colors"
           onClick={() => setShowInfo(!showInfo)}
         >
           <Info className="h-5 w-5" />
         </button>
       </div>
-      
+
+      {/* Info dropdown */}
       <AnimatePresence>
         {showInfo && (
-          <motion.div 
+          <motion.div
             className="bg-background/50 rounded-lg p-4 mb-6 border border-white/10"
             initial={{ opacity: 0, height: 0, marginBottom: 0 }}
             animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
@@ -127,10 +140,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-      
+
+      {/* Search */}
       <form onSubmit={handleSearch} className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
           <input
             ref={searchInputRef}
             type="text"
@@ -139,56 +153,37 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button 
+          <button
             type="submit"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary hover:text-primary-400 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:text-primary-400 transition-colors"
           >
             <Zap className="h-4 w-4" />
           </button>
         </div>
       </form>
-      
+
+      {/* Tabs */}
       <div className="flex border-b border-white/10 mb-4">
-        <button
-          className={`px-4 py-2 text-sm font-medium ${activeTab === 'navigation' 
-            ? 'text-primary border-b-2 border-primary' 
-            : 'text-white/70 hover:text-white'}`}
-          onClick={() => setActiveTab('navigation')}
-        >
-          Navigation
-        </button>
-        <button
-          className={`px-4 py-2 text-sm font-medium ${activeTab === 'filters' 
-            ? 'text-primary border-b-2 border-primary' 
-            : 'text-white/70 hover:text-white'}`}
-          onClick={() => setActiveTab('filters')}
-        >
-          Filters
-        </button>
-        <button
-          className={`px-4 py-2 text-sm font-medium ${activeTab === 'data' 
-            ? 'text-primary border-b-2 border-primary' 
-            : 'text-white/70 hover:text-white'}`}
-          onClick={() => setActiveTab('data')}
-        >
-          Data
-        </button>
+        <TabButton tab="navigation" label="Navigation" />
+        <TabButton tab="filters" label="Filters" />
       </div>
-      
+
+      {/* Tab content */}
       <div className="space-y-4">
         {activeTab === 'navigation' && (
           <div className="space-y-4">
+            {/* Zoom controls */}
             <div className="bg-background/30 rounded-lg p-4">
               <h4 className="text-sm font-medium mb-3">Zoom Controls</h4>
               <div className="grid grid-cols-2 gap-3">
-                <button 
+                <button
                   className="bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
                   onClick={onZoomIn}
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Zoom In
                 </button>
-                <button 
+                <button
                   className="bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
                   onClick={onZoomOut}
                 >
@@ -197,48 +192,49 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                 </button>
               </div>
             </div>
-            
+
+            {/* Camera controls */}
             <div className="bg-background/30 rounded-lg p-4">
               <h4 className="text-sm font-medium mb-3">Camera Controls</h4>
               <div className="grid grid-cols-3 gap-2">
                 <div className="col-start-2">
-                  <button 
+                  <button
                     className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
                     onClick={() => onMoveCamera('up')}
                   >
                     <ArrowUp className="h-5 w-5" />
                   </button>
                 </div>
-                
+
                 <div className="col-start-1 row-start-2">
-                  <button 
+                  <button
                     className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
                     onClick={() => onMoveCamera('left')}
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </button>
                 </div>
-                
+
                 <div className="col-start-2 row-start-2">
-                  <button 
+                  <button
                     className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
                     onClick={onReset}
                   >
                     <RefreshCw className="h-5 w-5" />
                   </button>
                 </div>
-                
+
                 <div className="col-start-3 row-start-2">
-                  <button 
+                  <button
                     className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
                     onClick={() => onMoveCamera('right')}
                   >
                     <ArrowRight className="h-5 w-5" />
                   </button>
                 </div>
-                
+
                 <div className="col-start-2 row-start-3">
-                  <button 
+                  <button
                     className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
                     onClick={() => onMoveCamera('down')}
                   >
@@ -247,10 +243,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                 </div>
               </div>
             </div>
-            
+
+            {/* Auto‑rotate toggle */}
             <div className="bg-background/30 rounded-lg p-4">
               <h4 className="text-sm font-medium mb-3">Animation</h4>
-              <button 
+              <button
                 className={`w-full ${isAutoRotate ? 'bg-primary' : 'bg-background/50'} hover:bg-primary/90 rounded-lg p-3 flex items-center justify-center transition-colors`}
                 onClick={handleRotateToggle}
               >
@@ -269,7 +266,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             </div>
           </div>
         )}
-        
+
         {activeTab === 'filters' && (
           <div className="space-y-4">
             <div className="bg-background/30 rounded-lg p-4">
@@ -279,15 +276,15 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                   <label key={category} className="flex items-center space-x-2 cursor-pointer">
                     <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
                     <span className="text-sm">{category}</span>
-                    <div 
-                      className="w-3 h-3 rounded-full ml-2" 
+                    <div
+                      className="w-3 h-3 rounded-full ml-2"
                       style={{ backgroundColor: ['#6366F1', '#F472B6', '#F59E0B', '#10B981', '#EF4444'][index] }}
-                    ></div>
+                    />
                   </label>
                 ))}
               </div>
             </div>
-            
+
             <div className="bg-background/30 rounded-lg p-4">
               <h4 className="text-sm font-medium mb-3">Display Options</h4>
               <div className="space-y-2">
@@ -297,56 +294,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
-                  <span className="text-sm">Show User Paths</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
                   <span className="text-sm">Show Axes</span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
                   <span className="text-sm">Show Grid</span>
                 </label>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {activeTab === 'data' && (
-          <div className="space-y-4">
-            <div className="bg-background/30 rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-3">Data Actions</h4>
-              <div className="space-y-3">
-                <button className="w-full bg-primary hover:bg-primary/90 rounded-lg p-3 flex items-center justify-center transition-colors">
-                  <DownloadCloud className="h-5 w-5 mr-2" />
-                  Export Visualization
-                </button>
-                <button className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors">
-                  <Download className="h-5 w-5 mr-2" />
-                  Export Raw Data
-                </button>
-              </div>
-            </div>
-            
-            <div className="bg-background/30 rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-3">Statistics</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-white/70">Total Products:</span>
-                  <span>200</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white/70">Total Clusters:</span>
-                  <span>5</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white/70">User Journeys:</span>
-                  <span>10</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white/70">Dimensions:</span>
-                  <span>3D</span>
-                </div>
               </div>
             </div>
           </div>

@@ -11,51 +11,19 @@ import styles from './ScatterPlot3D.module.css';
 
 // Typed imports for data
 import productsJson from '../../assets/data/products.json';
-import usersJson from '../../assets/data/users.json';
 
-type Product = { 
+type Product = {
   id: number;
-  name: string;
-  x: number; 
-  y: number; 
-  z: number; 
-  cluster: number;
+  product_title: string;
+  x: number;
+  y: number;
+  z: number;
   category: string;
+  subcategory: string;
 };
-
-type User = { 
-  user_id: string; 
-  purchases: [number, number, number][]; 
-};
-
-// Mock data structure if JSON files don't exist
-const mockProducts: Product[] = Array.from({ length: 200 }, (_, i) => ({
-  id: i,
-  name: `Product ${i}`,
-  x: (Math.random() - 0.5) * 40,
-  y: (Math.random() - 0.5) * 40,
-  z: (Math.random() - 0.5) * 40,
-  cluster: Math.floor(Math.random() * 5),
-  category: ['Clothing', 'Electronics', 'Home Goods', 'Sports', 'Beauty'][Math.floor(Math.random() * 5)]
-}));
-
-const mockUsers: User[] = Array.from({ length: 10 }, (_, i) => ({
-  user_id: `user_${i}`,
-  purchases: Array.from({ length: 5 }, () => [
-    Math.floor(Math.random() * 200),
-    Math.floor(Math.random() * 200),
-    Math.floor(Math.random() * 200)
-  ])
-}));
 
 // Use real data if available, otherwise mock data
-const products: Product[] = 'id' in (productsJson[0] || {}) 
-  ? productsJson as unknown as Product[]
-  : mockProducts;
-
-const users: User[] = 'user_id' in (usersJson[0] || {})
-  ? usersJson as unknown as User[]
-  : mockUsers;
+const products: Product[] = productsJson as unknown as Product[];
 
 export interface ScatterPlot3DHandle {
   zoomIn(): void;
@@ -71,14 +39,27 @@ interface ScatterPlot3DProps {
   className?: string;
 }
 
-// Colors for clusters
-const CLUSTER_COLORS = [
-  0x6366F1, // primary (indigo)
-  0xF472B6, // secondary (pink)
-  0xF59E0B, // accent (amber)
-  0x10B981, // success (emerald)
-  0xEF4444, // error (red)
+const CATEGORY_COLORS = [
+  0x6366F1, // indigo
+  0xF472B6, // pink
+  0xF59E0B, // amber
+  0x10B981, // emerald
+  0xEF4444, // red
+  0x8B5CF6, // violet
+  0x34D399, // green
+  0xF97316, // orange
 ];
+
+const getCategoryColor = (() => {
+  const cache: Record<string, number> = {};
+  return (category: string) => {
+    if (!cache[category]) {
+      const nextIndex = Object.keys(cache).length % CATEGORY_COLORS.length;
+      cache[category] = CATEGORY_COLORS[nextIndex];
+    }
+    return cache[category];
+  };
+})();
 
 const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
   ({ height = '600px', className = '' }, ref) => {
@@ -87,7 +68,6 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
     const controlsRef = useRef<OrbitControls | null>(null);
     const productMeshesRef = useRef<THREE.Mesh[]>([]);
-    const userLinesRef = useRef<THREE.Line[]>([]);
     const highlightedMeshRef = useRef<THREE.Mesh | null>(null);
     
     const [isSearching, setIsSearching] = useState(false);
@@ -95,38 +75,44 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
     // Camera position state
     const azimuthRef = useRef(0);
     const polarRef = useRef(Math.PI / 6);
-    const radiusRef = useRef(50);
+    const radiusRef = useRef(100);
     const orbitEnabledRef = useRef(true);
     const targetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
 
     // Expose methods to parent
     useImperativeHandle(ref, () => ({
+      /** Zoom the camera in (closer to the plot) */
       zoomIn() {
         radiusRef.current = Math.max(10, radiusRef.current - 5);
         updateCameraPosition();
       },
+
+      /** Zoom the camera out (farther from the plot) */
       zoomOut() {
         radiusRef.current += 5;
         updateCameraPosition();
       },
+
+      /** Toggle automatic orbit-rotation on/off */
       toggleRotate() {
         orbitEnabledRef.current = !orbitEnabledRef.current;
         if (controlsRef.current) {
           controlsRef.current.autoRotate = orbitEnabledRef.current;
         }
       },
+
+      /** Reset camera, target and highlights to their defaults */
       resetView() {
         azimuthRef.current = 0;
         polarRef.current = Math.PI / 6;
-        radiusRef.current = 50;
+        radiusRef.current = 100;
         targetPositionRef.current.set(0, 0, 0);
         updateCameraPosition();
-        
-        // Reset any highlighted products
         resetHighlights();
       },
+
+      /** Pan the camera in 90-degree increments */
       moveCamera(direction: 'left' | 'right' | 'up' | 'down') {
-        const stepSize = 5;
         switch (direction) {
           case 'left':
             azimuthRef.current -= Math.PI / 16;
@@ -143,56 +129,57 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
         }
         updateCameraPosition();
       },
+
+      /** Keyword search across product_title, category and subcategory */
       searchProduct(term: string) {
         if (!term) {
           resetHighlights();
           return;
         }
-        
+
         setIsSearching(true);
-        
-        // Normalize search term
-        const searchTerm = term.toLowerCase();
-        
-        // Find products that match the search term
-        const matchingProducts = products.filter(p => 
-          p.name.toLowerCase().includes(searchTerm) || 
-          p.category.toLowerCase().includes(searchTerm)
+        const searchTerm = term.trim().toLowerCase();
+
+        const matchingProducts = products.filter(
+          p =>
+            p.product_title.toLowerCase().includes(searchTerm) ||
+            p.category.toLowerCase().includes(searchTerm) ||
+            p.subcategory.toLowerCase().includes(searchTerm)
         );
-        
-        if (matchingProducts.length > 0) {
-          // Highlight matching products
+
+        if (matchingProducts.length) {
           highlightProducts(matchingProducts);
-          
-          // Calculate center position of matching products
-          const center = matchingProducts.reduce(
-            (acc, product) => {
-              acc.x += product.x;
-              acc.y += product.y;
-              acc.z += product.z;
+
+          // Calculate the geometric centre of the matches
+          const centre = matchingProducts.reduce(
+            (acc, { x, y, z }) => {
+              acc.x += x;
+              acc.y += y;
+              acc.z += z;
               return acc;
             },
             { x: 0, y: 0, z: 0 }
           );
-          
+
           const count = matchingProducts.length;
           targetPositionRef.current.set(
-            center.x / count,
-            center.y / count,
-            center.z / count
+            centre.x / count,
+            centre.y / count,
+            centre.z / count
           );
-          
-          // Move camera to look at the matching products
+
+          // Re-target the controls so the camera orbits the highlighted cluster
           if (cameraRef.current && controlsRef.current) {
             controlsRef.current.target.copy(targetPositionRef.current);
           }
         } else {
           resetHighlights();
         }
-        
+
         setIsSearching(false);
       }
     }));
+
     
     // Helper functions
     const updateCameraPosition = () => {
@@ -221,7 +208,7 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
       productMeshesRef.current.forEach((mesh, index) => {
         const product = products[index];
         if (product && mesh.material instanceof THREE.MeshLambertMaterial) {
-          mesh.material.color.setHex(CLUSTER_COLORS[product.cluster % CLUSTER_COLORS.length]);
+          mesh.material.color.setHex(getCategoryColor(product.category));
           mesh.material.emissive.setHex(0x000000);
           mesh.scale.set(1, 1, 1);
         }
@@ -309,12 +296,11 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
       
       products.forEach((product, index) => {
         const material = new THREE.MeshLambertMaterial({
-          color: new THREE.Color(CLUSTER_COLORS[product.cluster % CLUSTER_COLORS.length])
+          color: new THREE.Color(getCategoryColor(product.category))
         });
         
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(product.x, product.y, product.z);
-        mesh.userData = { productId: product.id, productName: product.name };
         
         scene.add(mesh);
         productMeshes.push(mesh);
@@ -322,42 +308,20 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
       
       productMeshesRef.current = productMeshes;
       
-      // Create user journey lines
-      const userLines: THREE.Line[] = [];
-      
-      users.slice(0, 5).forEach(user => {
-        if (user.purchases.length < 2) return;
-        
-        const points: THREE.Vector3[] = user.purchases.map(purchaseId => {
-          const product = products.find(p => p.id === purchaseId[0]);
-          return product 
-            ? new THREE.Vector3(product.x, product.y, product.z)
-            : new THREE.Vector3(0, 0, 0);
-        });
-        
-        if (points.length < 2) return;
-        
-        const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-        const lineMaterial = new THREE.LineBasicMaterial({ 
-          color: 0xffffff,
-          opacity: 0.3,
-          transparent: true
-        });
-        
-        const line = new THREE.Line(lineGeometry, lineMaterial);
-        scene.add(line);
-        userLines.push(line);
-      });
-      
-      userLinesRef.current = userLines;
-
       // Setup raycaster for mouse interaction
+      let lastPick = 0;          // time of the last ray-cast
+      const PICK_DELAY = 50;     // ms between picks  (≈ 20 fps)
+  
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
       
       const onMouseMove = (event: MouseEvent) => {
         if (!mountRef.current) return;
-        
+      
+        const now = performance.now();
+        if (now - lastPick < PICK_DELAY) return;   // skip this frame
+        lastPick = now;
+
         // Calculate mouse position in normalized device coordinates
         const rect = mountRef.current.getBoundingClientRect();
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
