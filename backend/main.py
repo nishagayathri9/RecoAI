@@ -27,15 +27,22 @@ app.add_middleware(
 
 
 FEATURES = {
-    'price_scaled',
-    'sentiment',
-    'color_encoded',
-    'material_encoded',
     'user_id',
     'product_id',
+    'product_title',
+    'category',
+    'features',
     'rating',
-    'product_title'
+    'sentiment',
+    'u_idx',
+    'i_idx',
+    'seq',
+    'price_scaled',
+    'category_encoded',
+    'color_encoded',
+    'material_encoded'
 }
+
 
 
 
