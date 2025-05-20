@@ -72,32 +72,7 @@ FEATURES = {
     'product_title'
 }
 
-@app.post("/upload/")
-async def upload(data_file: UploadFile = File(...)):
-    # 1) Read CSV
-    try:
-        df = pd.read_csv(data_file.file)
-    except Exception as e:
-        raise HTTPException(400, f"Could not read CSV: {e}")
 
-    # 2) Check for missing features
-    actual = set(df.columns)
-    missing = FEATURES - actual
-    if missing:
-        raise HTTPException(
-            400,
-            {
-                "detail": "Missing required features",
-                "missing_features": sorted(missing),
-                "required_features": sorted(FEATURES)
-            }
-        )
-
-    # 3) All required columns are there—return success with the list
-    return {
-        "detail": "All required features present",
-        "features": sorted(actual)
-    }
 
 # ─── Data Preprocessing ─────────────────────────────────────────────────
 
