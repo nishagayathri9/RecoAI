@@ -41,6 +41,7 @@ USER_META: Optional[dict[int, List[float]]] = None
 ITEM_META: Optional[dict[int, List[float]]] = None
 NUM_USERS = NUM_ITEMS = 0
 
+
 # ─── Load Model Dynamically ────────────────────────────────────────────────
 def load_model():
     global MODEL
@@ -78,6 +79,12 @@ FEATURES = {
 
 @app.post("/upload/")
 async def upload(data_file: UploadFile = File(...)):
+
+    
+
+
+
+
     # 1) Read CSV
     global RAW_DF
     try:
@@ -108,42 +115,45 @@ async def upload(data_file: UploadFile = File(...)):
 # ─── Data Preprocessing ─────────────────────────────────────────────────
 @app.post("/preprocess/")
 async def preprocess():
-    """
-    Placeholder for your real preprocessing logic.
-    It will get handed the raw DataFrame you just uploaded.
-    """
-    global DF_TEST
-    global X_TEST_META
+    global DF_TEST, X_TEST_META
+    global DF_INTERACTIONS, META_MATRIX, ITEM_TITLE_MAP, ITEM_EMBEDDINGS
 
     if RAW_DF is None: 
         raise HTTPException(400, "No data uploaded yet; call /upload/ first")
 
-    # TODO: your real preprocessing steps here
     pre = Preprocessing(RAW_DF)
     df_processed, embeddings_list = pre.run()
-    
+
     if df_processed is None or df_processed.empty:
         raise HTTPException(500, "Preprocessing returned an empty DataFrame")
     if not isinstance(embeddings_list, list) or len(embeddings_list) == 0:
         raise HTTPException(500, "Preprocessing returned no embeddings")
 
-    # 2) Split & load
     data_module = RecommenderDataModule(
-        df           = df_processed,
-        embeddings_list = [emb for key, emb in embeddings_list],
-        batch_size   = 512
+        df=df_processed,
+        embeddings_list=[emb for key, emb in embeddings_list],
+        batch_size=512
     )
-
     data_module.setup()
     train_loader, val_loader, test_loader = data_module.get_loaders()
     df_test, X_test_meta = data_module.get_test_split()
-    
-    DF_TEST  = df_test
-    X_TEST_META =  X_test_meta
+
+    # ✅ Set globals for downstream use
+    DF_TEST = df_test
+    X_TEST_META = X_test_meta
+    DF_INTERACTIONS = df_test
+    META_MATRIX     = X_test_meta
+    ITEM_TITLE_MAP  = dict(zip(df_test['product_id'], df_test['product_title']))
+
+    with torch.no_grad():
+        ITEM_EMBEDDINGS = MODEL.cf.item_emb.weight.detach().cpu().numpy()
+
     return {
         "detail": "Data is Preprocessed",
         "original_shape": RAW_DF.shape,
+        "test_shape": df_test.shape
     }
+
 
 
 
@@ -185,17 +195,8 @@ def predict(req: PredictRequest):
 
 # ─── Top K ───────────────────────────────────────────────────
 
-DF_INTERACTIONS = None
-META_MATRIX = None
-ITEM_TITLE_MAP = None
-ITEM_EMBEDDINGS = None
 
 
-DF_INTERACTIONS = DF_TEST
-META_MATRIX = X_TEST_META
-ITEM_TITLE_MAP = dict(zip(DF_INTERACTIONS['product_id'], DF_INTERACTIONS['product_title']))
-with torch.no_grad():
-    ITEM_EMBEDDINGS = MODEL.cf.item_emb.weight.detach().cpu().numpy()
 
 
 @app.get("/interpret/")
