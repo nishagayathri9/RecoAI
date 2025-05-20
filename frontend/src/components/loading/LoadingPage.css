@@ -1,6 +1,8 @@
-/* From Uiverse.io by kennyotsu */
-.card {
+:root {
   --bg-color: #212121;
+}
+
+.card {
   background-color: var(--bg-color);
   padding: 1rem 2rem;
   border-radius: 1.25rem;
@@ -15,6 +17,7 @@
   height: 40px;
   padding: 10px;
   display: flex;
+  align-items: center;
   border-radius: 8px;
 }
 
@@ -41,16 +44,26 @@
   height: 100%;
   padding-left: 6px;
   color: #956afa;
-  animation: spin_4991 4s infinite;
+  animation: spin 4s infinite;
 }
 
-@keyframes spin_4991 {
-  10%   { transform: translateY(-102%); }
-  25%   { transform: translateY(-100%); }
-  35%   { transform: translateY(-202%); }
-  50%   { transform: translateY(-200%); }
-  60%   { transform: translateY(-302%); }
-  75%   { transform: translateY(-300%); }
-  85%   { transform: translateY(-402%); }
-  100%  { transform: translateY(-400%); }
+@keyframes spin {
+  0%, 10% {
+    transform: translateY(0%);
+  }
+  15%, 25% {
+    transform: translateY(-100%);
+  }
+  30%, 35% {
+    transform: translateY(-200%);
+  }
+  40%, 50% {
+    transform: translateY(-300%);
+  }
+  55%, 60% {
+    transform: translateY(-400%);
+  }
+  100% {
+    transform: translateY(-400%);
+  }
 }

@@ -1,20 +1,43 @@
-// src/components/LoadingPage.tsx
-import React from 'react';
-import './LoadingPage.css'; // make sure to import the CSS
+import React, { useEffect } from 'react';
+import './loadingpage.css';
 
-const LoadingPage: React.FC = () => (
-  <div className="card">
-    <div className="loader">
-      <p>loading</p>
-      <div className="words">
-        <span className="word">buttons</span>
-        <span className="word">forms</span>
-        <span className="word">switches</span>
-        <span className="word">cards</span>
-        <span className="word">buttons</span>
+interface LoadingPageProps {
+  /** Duration of loader in milliseconds */
+  duration?: number;
+  /** Callback when loading finishes */
+  onFinish?: () => void;
+}
+
+const wordsList = [
+  'buttons',
+  'forms',
+  'switches',
+  'cards',
+  'buttons'
+];
+
+const LoadingPage: React.FC<LoadingPageProps> = ({ duration = 8000, onFinish }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (onFinish) onFinish();
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [duration, onFinish]);
+
+  return (
+    <div className="card">
+      <div className="loader">
+        <p>loading</p>
+        <div className="words">
+          {wordsList.map((word, idx) => (
+            <span key={idx} className="word">
+              {word}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default LoadingPage;
