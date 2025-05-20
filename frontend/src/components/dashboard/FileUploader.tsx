@@ -6,6 +6,7 @@ import { DatasetFile } from '../../types';
 
 interface FileUploaderProps {
   onFilesAccepted: (files: DatasetFile[]) => void;
+  onUploadError?: (message: string) => void;
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({ onFilesAccepted }) => {
@@ -47,7 +48,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFilesAccepted }) => {
       'text/csv': ['.csv'],
       'application/json': ['.json']
     },
-    maxSize: 10485760 // 10MB
+    maxSize: 20971520 // 20MB
   });
   
   const removeFile = (index: number) => {
@@ -87,7 +88,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFilesAccepted }) => {
             <p className="text-white/60 text-sm">
               {isDragReject 
                 ? "File type not supported" 
-                : "Support for CSV and JSON files (max 10MB)"}
+                : "Support for CSV and JSON files (max 20MB)"}
             </p>
           </div>
           

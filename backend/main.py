@@ -44,10 +44,6 @@ FEATURES = {
 }
 
 
-
-
-
-
 @app.post("/upload/")
 async def upload(data_file: UploadFile = File(...)):
 
