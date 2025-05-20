@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from typing import List, Optional
-from recommender import GroupRecommender
+from backend.recommender import GroupRecommender
 
 # ─── FastAPI App Config ────────────────────────────────────────────────────
 app = FastAPI(
