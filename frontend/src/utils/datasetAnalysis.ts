@@ -24,7 +24,7 @@ const seededRandom = (seed: string, min: number, max: number): number => {
   return parseFloat((min + clamped * (max - min)).toFixed(2));
 };
 
-export const analyzeDataset = async (file: File): Promise<DatasetMetrics> => {
+export const datasetAnalysis = async (file: File): Promise<DatasetMetrics> => {
   const fileName = file.name;
   const ext = fileName.split('.').pop()?.toLowerCase();
 
