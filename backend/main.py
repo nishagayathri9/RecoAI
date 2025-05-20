@@ -82,7 +82,7 @@ async def upload(data_file: UploadFile = File(...)):
 class RecommendRequest(BaseModel):
     cold_start_ids: Optional[List[int]] = None
     users_per_cat: int = 25
-    top_k: int = 5
+    top_k: int = 5       
 
 
 # ─── Group Recommendation Endpoint ─────────────────────────────────────────
@@ -127,7 +127,7 @@ async def group_recommend(req: RecommendRequest):
             cold_start_ids=req.cold_start_ids,
             users_per_cat=req.users_per_cat,
             top_k=req.top_k
-        )
+                )
     except KeyError as e:
         # e.g. missing expected column in RAW_DF
         raise HTTPException(
@@ -149,9 +149,8 @@ async def group_recommend(req: RecommendRequest):
 
     # 4) Return success payload
     return {
-        "detail": "Recommendations generated successfully",
-        "cold_ids": result.get("cold_ids", []),
+        "message": "Recommendations generated successfully",
+        "cold_ids": result["cold_ids"],
         "results": result["results"]
     }
-
 #get to output the results
