@@ -42,20 +42,7 @@ const PlaygroundPage: React.FC = () => {
   const handleSearch = (term: string) => {
     plotRef.current?.searchProduct(term);
   };
-  
-  const toggleFullscreen = () => {
-    if (!ref3dView.current) return;
-    
-    if (!isFullscreen) {
-      if (ref3dView.current.requestFullscreen) {
-        ref3dView.current.requestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
+
   
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -105,28 +92,23 @@ const PlaygroundPage: React.FC = () => {
             <div className="lg:col-span-3">
               <div className="relative" ref={ref3dView}>
                 <div className="absolute top-4 right-4 z-10">
-                  <button 
-                    className="bg-background/60 backdrop-blur-sm hover:bg-background/80 p-2 rounded-lg text-white/80 hover:text-white transition-colors"
-                    onClick={toggleFullscreen}
-                  >
-                    <Maximize2 className="h-5 w-5" />
-                  </button>
                 </div>
                 <ScatterPlot3D height="600px" ref={plotRef} />
               </div>
               
+              { /* Change Here */}
               <div className="mt-6 bg-background-tertiary rounded-xl p-5 border border-white/10">
                 <h3 className="text-xl font-semibold flex items-center mb-4">
                   <LayoutGrid className="mr-2 h-5 w-5 text-primary" />
                   Product Insights
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-background/30 rounded-lg p-4">
                     <h4 className="font-medium mb-2">Category Distribution</h4>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Clothing</span>
+                        <span className="text-white/70">Beauty & Personal Care</span>
                         <span>28%</span>
                       </div>
                       <div className="w-full bg-background/50 rounded-full h-2">
@@ -142,7 +124,7 @@ const PlaygroundPage: React.FC = () => {
                       </div>
                       
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Home Goods</span>
+                        <span className="text-white/70">Tools & Home Improvement</span>
                         <span>18%</span>
                       </div>
                       <div className="w-full bg-background/50 rounded-full h-2">
@@ -150,7 +132,7 @@ const PlaygroundPage: React.FC = () => {
                       </div>
                       
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Sports</span>
+                        <span className="text-white/70">Clothing, Shoes & Jewelry</span>
                         <span>17%</span>
                       </div>
                       <div className="w-full bg-background/50 rounded-full h-2">
@@ -212,59 +194,20 @@ const PlaygroundPage: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-background/30 rounded-lg p-4">
-                    <h4 className="font-medium mb-2">Connected Products</h4>
-                    <div className="space-y-3">
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <div key={index} className="flex items-center">
-                          <div 
-                            className="w-3 h-3 rounded-full mr-2" 
-                            style={{ 
-                              backgroundColor: ['#6366F1', '#F472B6', '#F59E0B', '#10B981', '#EF4444'][index]
-                            }}
-                          ></div>
-                          <div className="text-sm">
-                            <div className="font-medium">Product {index + 1}</div>
-                            <div className="text-white/60 text-xs">Connections: {Math.floor(Math.random() * 10) + 1}</div>
-                          </div>
-                        </div>
-                      ))}
-                      
-                      <button className="w-full text-primary text-sm flex items-center justify-center mt-2">
-                        View All
-                        <ArrowRight className="ml-1 h-3 w-3" />
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
             
             <div className="lg:col-span-1">
-              <ControlPanel
-                onReset={handleReset}
-                onZoomIn={handleZoomIn}
-                onZoomOut={handleZoomOut}
-                onRotate={handleRotate}
-                onMoveCamera={handleMoveCamera}
-                onSearch={handleSearch}
-                plotRef={plotRef}
-              />
+            <ControlPanel
+              onReset={handleReset}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+              onRotate={handleRotate}
+              onMoveCamera={handleMoveCamera}
+              plotRef={plotRef}            // ← keep only this
+            />
               
-              <div className="mt-6 bg-background-tertiary rounded-xl p-5 border border-white/10">
-                <h3 className="text-xl font-semibold flex items-center mb-4">
-                  <FileSpreadsheet className="mr-2 h-5 w-5 text-primary" />
-                  My Datasets
-                </h3>
-                
-                <p className="text-white/70 text-sm mb-4">
-                  Upload your own dataset to generate a custom visualization and recommendation dashboard.
-                </p>
-                
-                <Link to="/dashboard" className="btn-primary w-full justify-center">
-                  Go to Dashboard
-                </Link>
-              </div>
             </div>
           </div>
         </div>

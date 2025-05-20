@@ -19,7 +19,6 @@ type Product = {
   y: number;
   z: number;
   category: string;
-  subcategory: string;
 };
 
 // Use real data if available, otherwise mock data
@@ -143,8 +142,7 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
         const matchingProducts = products.filter(
           p =>
             p.product_title.toLowerCase().includes(searchTerm) ||
-            p.category.toLowerCase().includes(searchTerm) ||
-            p.subcategory.toLowerCase().includes(searchTerm)
+            p.category.toLowerCase().includes(searchTerm) 
         );
 
         if (matchingProducts.length) {

@@ -1,10 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Sliders, Search, Zap, RefreshCw,
-  Plus, Minus, RotateCw, Info,
-  ArrowUp, ArrowDown, ArrowLeft, ArrowRight,
-  Eye, EyeOff
+  Sliders,
+  Search,
+  Zap,
+  RefreshCw,
+  Plus,
+  Minus,
+  RotateCw,
+  Info,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { ScatterPlot3DHandle } from './ScatterPlot3D';
 
@@ -14,11 +24,9 @@ interface ControlPanelProps {
   onZoomOut: () => void;
   onRotate: () => void;
   onMoveCamera: (direction: 'left' | 'right' | 'up' | 'down') => void;
-  onSearch: (term: string) => void;
+  /** Ref to the scatter-plot so we can invoke its public API */
   plotRef: React.RefObject<ScatterPlot3DHandle>;
 }
-
-type Tab = 'navigation' | 'filters';
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
   onReset,
@@ -26,32 +34,30 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   onZoomOut,
   onRotate,
   onMoveCamera,
-  onSearch,
   plotRef
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   const [isAutoRotate, setIsAutoRotate] = useState(true);
-  const [activeTab, setActiveTab] = useState<Tab>('navigation');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // ────────────────────────────────────────────────────────────────────────────────
-  // Event handlers
-  // ────────────────────────────────────────────────────────────────────────────────
+  // Handle the search form submission
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchTerm) onSearch(searchTerm);
+    const term = searchTerm.trim();
+    if (!plotRef.current) return;
+    plotRef.current.searchProduct(term);
   };
 
+  // Toggle auto-rotate state
   const handleRotateToggle = () => {
-    setIsAutoRotate(!isAutoRotate);
+    setIsAutoRotate((prev) => !prev);
     onRotate();
   };
 
+  // Keyboard shortcuts
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Skip shortcuts when typing in the search field
     if (e.target === searchInputRef.current) return;
-
     switch (e.key) {
       case 'ArrowUp':
         onMoveCamera('up');
@@ -80,26 +86,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown as any);
-    return () => window.removeEventListener('keydown', handleKeyDown as any);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown as any);
+    };
   }, [isAutoRotate]);
-
-  // ────────────────────────────────────────────────────────────────────────────────
-  // Render helpers
-  // ────────────────────────────────────────────────────────────────────────────────
-  const TabButton: React.FC<{ tab: Tab; label: string }> = ({ tab, label }) => (
-    <button
-      className={`px-4 py-2 text-sm font-medium ${
-        activeTab === tab
-          ? 'text-primary border-b-2 border-primary'
-          : 'text-white/70 hover:text-white'
-      }`}
-      onClick={() => setActiveTab(tab)}
-    >
-      {label}
-    </button>
-  );
 
   return (
     <div
@@ -114,7 +106,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         </h3>
         <button
           className="text-white/70 hover:text-white transition-colors"
-          onClick={() => setShowInfo(!showInfo)}
+          onClick={() => setShowInfo((prev) => !prev)}
         >
           <Info className="h-5 w-5" />
         </button>
@@ -162,148 +154,96 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         </div>
       </form>
 
-      {/* Tabs */}
-      <div className="flex border-b border-white/10 mb-4">
-        <TabButton tab="navigation" label="Navigation" />
-        <TabButton tab="filters" label="Filters" />
-      </div>
-
-      {/* Tab content */}
+      {/* Navigation controls */}
       <div className="space-y-4">
-        {activeTab === 'navigation' && (
-          <div className="space-y-4">
-            {/* Zoom controls */}
-            <div className="bg-background/30 rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-3">Zoom Controls</h4>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  className="bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
-                  onClick={onZoomIn}
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Zoom In
-                </button>
-                <button
-                  className="bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
-                  onClick={onZoomOut}
-                >
-                  <Minus className="h-5 w-5 mr-2" />
-                  Zoom Out
-                </button>
-              </div>
-            </div>
+        {/* Zoom controls */}
+        <div className="bg-background/30 rounded-lg p-4">
+          <h4 className="text-sm font-medium mb-3">Zoom Controls</h4>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              className="bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
+              onClick={onZoomIn}
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Zoom In
+            </button>
+            <button
+              className="bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
+              onClick={onZoomOut}
+            >
+              <Minus className="h-5 w-5 mr-2" />
+              Zoom Out
+            </button>
+          </div>
+        </div>
 
-            {/* Camera controls */}
-            <div className="bg-background/30 rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-3">Camera Controls</h4>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-start-2">
-                  <button
-                    className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
-                    onClick={() => onMoveCamera('up')}
-                  >
-                    <ArrowUp className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <div className="col-start-1 row-start-2">
-                  <button
-                    className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
-                    onClick={() => onMoveCamera('left')}
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <div className="col-start-2 row-start-2">
-                  <button
-                    className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
-                    onClick={onReset}
-                  >
-                    <RefreshCw className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <div className="col-start-3 row-start-2">
-                  <button
-                    className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
-                    onClick={() => onMoveCamera('right')}
-                  >
-                    <ArrowRight className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <div className="col-start-2 row-start-3">
-                  <button
-                    className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
-                    onClick={() => onMoveCamera('down')}
-                  >
-                    <ArrowDown className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Auto‑rotate toggle */}
-            <div className="bg-background/30 rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-3">Animation</h4>
+        {/* Camera controls */}
+        <div className="bg-background/30 rounded-lg p-4">
+          <h4 className="text-sm font-medium mb-3">Camera Controls</h4>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="col-start-2">
               <button
-                className={`w-full ${isAutoRotate ? 'bg-primary' : 'bg-background/50'} hover:bg-primary/90 rounded-lg p-3 flex items-center justify-center transition-colors`}
-                onClick={handleRotateToggle}
+                className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
+                onClick={() => onMoveCamera('up')}
               >
-                {isAutoRotate ? (
-                  <>
-                    <EyeOff className="h-5 w-5 mr-2" />
-                    Stop Rotation
-                  </>
-                ) : (
-                  <>
-                    <RotateCw className="h-5 w-5 mr-2" />
-                    Enable Rotation
-                  </>
-                )}
+                <ArrowUp className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="col-start-1 row-start-2">
+              <button
+                className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
+                onClick={() => onMoveCamera('left')}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="col-start-2 row-start-2">
+              <button
+                className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
+                onClick={onReset}
+              >
+                <RefreshCw className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="col-start-3 row-start-2">
+              <button
+                className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
+                onClick={() => onMoveCamera('right')}
+              >
+                <ArrowRight className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="col-start-2 row-start-3">
+              <button
+                className="w-full bg-background/50 hover:bg-background/70 border border-white/10 rounded-lg p-3 flex items-center justify-center transition-colors"
+                onClick={() => onMoveCamera('down')}
+              >
+                <ArrowDown className="h-5 w-5" />
               </button>
             </div>
           </div>
-        )}
+        </div>
 
-        {activeTab === 'filters' && (
-          <div className="space-y-4">
-            <div className="bg-background/30 rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-3">Product Categories</h4>
-              <div className="space-y-2">
-                {['Clothing', 'Electronics', 'Home Goods', 'Sports', 'Beauty'].map((category, index) => (
-                  <label key={category} className="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
-                    <span className="text-sm">{category}</span>
-                    <div
-                      className="w-3 h-3 rounded-full ml-2"
-                      style={{ backgroundColor: ['#6366F1', '#F472B6', '#F59E0B', '#10B981', '#EF4444'][index] }}
-                    />
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-background/30 rounded-lg p-4">
-              <h4 className="text-sm font-medium mb-3">Display Options</h4>
-              <div className="space-y-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
-                  <span className="text-sm">Show Clusters</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
-                  <span className="text-sm">Show Axes</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="rounded text-primary focus:ring-primary" />
-                  <span className="text-sm">Show Grid</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Auto-rotate toggle */}
+        <div className="bg-background/30 rounded-lg p-4">
+          <h4 className="text-sm font-medium mb-3">Animation</h4>
+          <button
+            className={`w-full ${isAutoRotate ? 'bg-primary' : 'bg-background/50'} hover:bg-primary/90 rounded-lg p-3 flex items-center justify-center transition-colors`}
+            onClick={handleRotateToggle}
+          >
+            {isAutoRotate ? (
+              <>
+                <EyeOff className="h-5 w-5 mr-2" />
+                Stop Rotation
+              </>
+            ) : (
+              <>
+                <RotateCw className="h-5 w-5 mr-2" />
+                Enable Rotation
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
