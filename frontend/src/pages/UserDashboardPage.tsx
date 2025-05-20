@@ -407,32 +407,40 @@ const UserDashboardPage: React.FC = () => {
                   <div className="space-y-6">
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-medium">Get Recommendations for User</h4>
-                        <span className="bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">GET</span>
-                      </div>
-                      <div className="bg-background-secondary rounded-lg p-4 font-mono text-sm overflow-x-auto">
-                        <code>https://api.recoai.com/v1/recommendations/user/{`{user_id}`}</code>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-medium">Get Similar Products</h4>
-                        <span className="bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">GET</span>
-                      </div>
-                      <div className="bg-background-secondary rounded-lg p-4 font-mono text-sm overflow-x-auto">
-                        <code>https://api.recoai.com/v1/recommendations/product/{`{product_id}`}/similar</code>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-medium">Record User Interaction</h4>
+                        <h4 className="font-medium">Upload user & item CSVs</h4>
                         <span className="bg-secondary/20 text-secondary text-xs px-2 py-1 rounded-full">POST</span>
                       </div>
                       <div className="bg-background-secondary rounded-lg p-4 font-mono text-sm overflow-x-auto">
-                        <code>https://api.recoai.com/v1/interactions</code>
+                        <code>https://recoai-service-571665774793.us-central1.run.app/upload/{`{user_id}`}</code>
                       </div>
                     </div>
-                    <button className="w-full btn-outline">
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-medium">Get Metadata</h4>
+                        <span className="bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">GET</span>
+                      </div>
+                      <div className="bg-background-secondary rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <code>https://recoai-service-571665774793.us-central1.run.app/metadata/{`{product_id}`}/similar</code>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-medium">Run Recommendation Prediction </h4>
+                        <span className="bg-secondary/20 text-secondary text-xs px-2 py-1 rounded-full">POST</span>
+                      </div>
+                      <div className="bg-background-secondary rounded-lg p-4 font-mono text-sm overflow-x-auto">
+                        <code>https://recoai-service-571665774793.us-central1.run.app/predict/</code>
+                      </div>
+                    </div>
+                    <button
+                      className="w-full btn-outline"
+                      onClick={() =>
+                        window.open(
+                          "https://recoai-service-571665774793.us-central1.run.app/docs#/",
+                          "_blank"
+                        )
+                      }
+                    >
                       View Complete API Documentation
                     </button>
                   </div>

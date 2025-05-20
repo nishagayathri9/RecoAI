@@ -53,6 +53,21 @@ const PlaygroundPage: React.FC = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+
+  // Data for insights
+  const categoryData = [
+    { name: 'Beauty & Personal Care', pct: 25 },
+    { name: 'Electronics', pct: 22.9 },
+    { name: 'Tools & Home Improvement', pct: 21.3 },
+    { name: 'Clothing, Shoes & Jewelry', pct: 20.9 },
+    { name: 'Power & Hand Tools', pct: 5.1 },
+    { name: 'Shoe, Jewelry & Watch Accessories', pct: 3.1 },
+    { name: 'Car & Vehicle Electronics', pct: 1.7 },
+  ];
+
+  const clusterBuckets = ['High','Low','High','Medium','High','Low','Medium'];
+
+
   return (
     <div className="pt-24">
       {/* Hero Section */}
@@ -96,107 +111,55 @@ const PlaygroundPage: React.FC = () => {
                 <ScatterPlot3D height="600px" ref={plotRef} />
               </div>
               
-              { /* Change Here */}
+              {/* Product Insights */}
               <div className="mt-6 bg-background-tertiary rounded-xl p-5 border border-white/10">
                 <h3 className="text-xl font-semibold flex items-center mb-4">
                   <LayoutGrid className="mr-2 h-5 w-5 text-primary" />
                   Product Insights
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Category Distribution */}
                   <div className="bg-background/30 rounded-lg p-4">
                     <h4 className="font-medium mb-2">Category Distribution</h4>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Beauty & Personal Care</span>
-                        <span>28%</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-primary h-2 rounded-full" style={{ width: '28%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Electronics</span>
-                        <span>22%</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-secondary h-2 rounded-full" style={{ width: '22%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Tools & Home Improvement</span>
-                        <span>18%</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-accent h-2 rounded-full" style={{ width: '18%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Clothing, Shoes & Jewelry</span>
-                        <span>17%</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-success h-2 rounded-full" style={{ width: '17%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Beauty</span>
-                        <span>15%</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-error h-2 rounded-full" style={{ width: '15%' }}></div>
-                      </div>
+                      {categoryData.map((cat, idx) => {
+                        const barWidth = Math.max(cat.pct, 5);
+                        return (
+                          <div key={idx} className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-white/70">{cat.name}</span>
+                              <span>{cat.pct}%</span>
+                            </div>
+                            <div className="w-full bg-background/50 rounded-full h-2">
+                              <div className="bg-primary h-2 rounded-full" style={{ width: `${barWidth}%` }} />
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                  
+                  {/* Cluster Density */}
                   <div className="bg-background/30 rounded-lg p-4">
                     <h4 className="font-medium mb-2">Cluster Density</h4>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Cluster 1</span>
-                        <span>High</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-primary h-2 rounded-full" style={{ width: '85%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Cluster 2</span>
-                        <span>Medium</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-secondary h-2 rounded-full" style={{ width: '65%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Cluster 3</span>
-                        <span>Medium</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-accent h-2 rounded-full" style={{ width: '60%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Cluster 4</span>
-                        <span>Low</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-success h-2 rounded-full" style={{ width: '40%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Cluster 5</span>
-                        <span>Low</span>
-                      </div>
-                      <div className="w-full bg-background/50 rounded-full h-2">
-                        <div className="bg-error h-2 rounded-full" style={{ width: '30%' }}></div>
-                      </div>
+                      {['High','Low','High','Medium','Low','Medium','High'].map((bucket, idx) => (
+                        <div key={idx} className="space-y-1">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-white/70">Cluster {idx + 1}</span>
+                            <span>{bucket}</span>
+                          </div>
+                          <div className="w-full bg-background/50 rounded-full h-2">
+                            <div className="bg-primary h-2 rounded-full" style={{ width: bucket === 'High' ? '85%' : bucket === 'Medium' ? '50%' : '15%' }}></div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  
                 </div>
               </div>
             </div>
+
             
             <div className="lg:col-span-1">
             <ControlPanel
@@ -244,35 +207,6 @@ const PlaygroundPage: React.FC = () => {
                   Each point is a product, and the distance between points indicates their similarity. 
                   Products that are closer together are more likely to be recommended together.
                 </p>
-              </div>
-              
-              <div className="bg-background rounded-xl p-6 border border-white/10">
-                <h3 className="text-xl font-semibold mb-4">Color Coding</h3>
-                <p className="text-white/70 leading-relaxed mb-4">
-                  Colors represent different product categories:
-                </p>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 rounded-full bg-primary mr-2"></div>
-                    <span>Clothing</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 rounded-full bg-secondary mr-2"></div>
-                    <span>Electronics</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 rounded-full bg-accent mr-2"></div>
-                    <span>Home Goods</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 rounded-full bg-success mr-2"></div>
-                    <span>Sports</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 rounded-full bg-error mr-2"></div>
-                    <span>Beauty</span>
-                  </div>
-                </div>
               </div>
               
               <div className="bg-background rounded-xl p-6 border border-white/10">

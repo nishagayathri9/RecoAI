@@ -61,8 +61,9 @@ const getCategoryColor = (() => {
 })();
 
 const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
-  ({ height = '600px', className = '' }, ref) => {
+  ({ height = '600px', className = '' , }, ref) => {
     const mountRef = useRef<HTMLDivElement>(null);
+    const tooltipRef = useRef<HTMLDivElement | null>(null);
     const sceneRef = useRef<THREE.Scene | null>(null);
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
     const controlsRef = useRef<OrbitControls | null>(null);
@@ -202,34 +203,33 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
     };
     
     const resetHighlights = () => {
-      // Reset all product meshes to their original colors
-      productMeshesRef.current.forEach((mesh, index) => {
-        const product = products[index];
-        if (product && mesh.material instanceof THREE.MeshLambertMaterial) {
-          mesh.material.color.setHex(getCategoryColor(product.category));
+      // Restore every point to its category color & normal size
+      productMeshesRef.current.forEach((mesh, idx) => {
+        const p = products[idx];
+        if (mesh.material instanceof THREE.MeshLambertMaterial) {
+          mesh.material.color.setHex(getCategoryColor(p.category));
           mesh.material.emissive.setHex(0x000000);
           mesh.scale.set(1, 1, 1);
         }
       });
-      
-      // Remove any highlight mesh
-      if (highlightedMeshRef.current && sceneRef.current) {
-        sceneRef.current.remove(highlightedMeshRef.current);
-        highlightedMeshRef.current = null;
-      }
+      if (tooltipRef.current) tooltipRef.current.style.display = 'none';  // !! Hide tooltip !!
     };
     
     const highlightProducts = (matchingProducts: Product[]) => {
-      // Reset previous highlights
-      resetHighlights();
-      
-      // Highlight matching products
-      matchingProducts.forEach(product => {
-        const index = products.findIndex(p => p.id === product.id);
-        if (index >= 0 && index < productMeshesRef.current.length) {
-          const mesh = productMeshesRef.current[index];
+      productMeshesRef.current.forEach(mesh => {
+        if (mesh.material instanceof THREE.MeshLambertMaterial) {
+          mesh.material.color.setHex(0x777777);
+          mesh.material.emissive.setHex(0x000000);
+          mesh.scale.set(1, 1, 1);
+       }
+      });
+    
+      matchingProducts.forEach(p => {
+        const idx = products.findIndex(x => x.id === p.id);
+        if (idx >= 0) {
+          const mesh = productMeshesRef.current[idx];
           if (mesh.material instanceof THREE.MeshLambertMaterial) {
-            // Make the product glow and larger
+            mesh.material.color.setHex(getCategoryColor(p.category));
             mesh.material.emissive.setHex(0x555555);
             mesh.scale.set(1.5, 1.5, 1.5);
           }
@@ -306,6 +306,20 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
       
       productMeshesRef.current = productMeshes;
       
+
+      // !! Tooltip element creation !!
+      const tooltip = document.createElement('div');
+      tooltip.style.position = 'absolute';
+      tooltip.style.pointerEvents = 'none';
+      tooltip.style.padding = '4px 8px';
+      tooltip.style.background = 'rgba(0,0,0,0.7)';
+      tooltip.style.color = '#fff';
+      tooltip.style.borderRadius = '4px';
+      tooltip.style.fontSize = '12px';
+      tooltip.style.display = 'none';
+      mountRef.current.appendChild(tooltip);
+      tooltipRef.current = tooltip;
+
       // Setup raycaster for mouse interaction
       let lastPick = 0;          // time of the last ray-cast
       const PICK_DELAY = 50;     // ms between picks  (≈ 20 fps)
@@ -313,30 +327,46 @@ const ScatterPlot3D = forwardRef<ScatterPlot3DHandle, ScatterPlot3DProps>(
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
       
-      const onMouseMove = (event: MouseEvent) => {
+      const onMouseMove = (e: MouseEvent) => {
         if (!mountRef.current) return;
-      
+
         const now = performance.now();
-        if (now - lastPick < PICK_DELAY) return;   // skip this frame
+        if (now - lastPick < PICK_DELAY) return;
         lastPick = now;
 
-        // Calculate mouse position in normalized device coordinates
+        // NDC coords
         const rect = mountRef.current.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-        
-        // Update the raycaster
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;    // ← use e.clientX
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;   // ← use e.clientY
+
         raycaster.setFromCamera(mouse, camera);
-        
-        // Check for intersections
-        const intersects = raycaster.intersectObjects(productMeshes);
-        
-        if (intersects.length > 0) {
+        const intersects = raycaster.intersectObjects(productMeshesRef.current);
+
+        if (intersects.length) {
+          const mesh = intersects[0].object as THREE.Mesh;
+          // index into your ref’d array
+          const idx = productMeshesRef.current.indexOf(mesh);
+          const data = products[idx];
+
+          // grab the tooltip DIV safely
+          const tooltip = tooltipRef.current;
+          if (tooltip) {
+            tooltip.style.left = `${e.clientX - rect.left + 10}px`;
+            tooltip.style.top  = `${e.clientY - rect.top + 10}px`;
+            tooltip.innerText = `${data.product_title} (${data.category})`;
+            tooltip.style.display = 'block';
+          }
+
           document.body.style.cursor = 'pointer';
         } else {
+          const tooltip = tooltipRef.current;
+          if (tooltip) {
+            tooltip.style.display = 'none';
+          }
           document.body.style.cursor = 'default';
         }
       };
+
       
       // Attach mouse move listener
       mountRef.current.addEventListener('mousemove', onMouseMove);
