@@ -8,6 +8,8 @@
     "baseUrl": ".",
     "paths": {
     "three/examples/jsm/*": ["node_modules/three-stdlib/*"]},
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",

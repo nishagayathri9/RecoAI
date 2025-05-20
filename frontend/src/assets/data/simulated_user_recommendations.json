@@ -1,0 +1,1402 @@
+{
+  "User #01": {
+    "purchases": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 79
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 83
+      }
+    ]
+  },
+  "User #02": {
+    "purchases": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 70
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 83
+      }
+    ]
+  },
+  "User #03": {
+    "purchases": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 81
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 84
+      }
+    ]
+  },
+  "User #04": {
+    "purchases": [
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 74
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 81
+      }
+    ]
+  },
+  "User #05": {
+    "purchases": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 90
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 80
+      }
+    ]
+  },
+  "User #06": {
+    "purchases": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 79
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 73
+      }
+    ]
+  },
+  "User #07": {
+    "purchases": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 85
+      },
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care",
+        "score": 80
+      }
+    ]
+  },
+  "User #08": {
+    "purchases": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 88
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 78
+      }
+    ]
+  },
+  "User #09": {
+    "purchases": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care",
+        "score": 73
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 85
+      }
+    ]
+  },
+  "User #10": {
+    "purchases": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 87
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 70
+      }
+    ]
+  },
+  "User #11": {
+    "purchases": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 85
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 78
+      }
+    ]
+  },
+  "User #12": {
+    "purchases": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 78
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 76
+      }
+    ]
+  },
+  "User #13": {
+    "purchases": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 79
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 72
+      }
+    ]
+  },
+  "User #14": {
+    "purchases": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 88
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 84
+      }
+    ]
+  },
+  "User #15": {
+    "purchases": [
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 81
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 78
+      }
+    ]
+  },
+  "User #16": {
+    "purchases": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 88
+      },
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care",
+        "score": 86
+      }
+    ]
+  },
+  "User #17": {
+    "purchases": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care",
+        "score": 89
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 89
+      }
+    ]
+  },
+  "User #18": {
+    "purchases": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 85
+      },
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care",
+        "score": 71
+      }
+    ]
+  },
+  "User #19": {
+    "purchases": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 71
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 87
+      }
+    ]
+  },
+  "User #20": {
+    "purchases": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 71
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 83
+      }
+    ]
+  },
+  "User #21": {
+    "purchases": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 90
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 70
+      }
+    ]
+  },
+  "User #22": {
+    "purchases": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 74
+      },
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care",
+        "score": 86
+      }
+    ]
+  },
+  "User #23": {
+    "purchases": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 84
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 85
+      }
+    ]
+  },
+  "User #24": {
+    "purchases": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 77
+      },
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care",
+        "score": 86
+      }
+    ]
+  },
+  "User #25": {
+    "purchases": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 78
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 78
+      }
+    ]
+  },
+  "User #26": {
+    "purchases": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care",
+        "score": 71
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 89
+      }
+    ]
+  },
+  "User #27": {
+    "purchases": [
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 76
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 88
+      }
+    ]
+  },
+  "User #28": {
+    "purchases": [
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 71
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 83
+      }
+    ]
+  },
+  "User #29": {
+    "purchases": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 81
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 84
+      }
+    ]
+  },
+  "User #30": {
+    "purchases": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 88
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 90
+      }
+    ]
+  },
+  "User #31": {
+    "purchases": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 74
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 71
+      }
+    ]
+  },
+  "User #32": {
+    "purchases": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 87
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 80
+      }
+    ]
+  },
+  "User #33": {
+    "purchases": [
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 82
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 80
+      }
+    ]
+  },
+  "User #34": {
+    "purchases": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 76
+      },
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care",
+        "score": 84
+      }
+    ]
+  },
+  "User #35": {
+    "purchases": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 74
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 78
+      }
+    ]
+  },
+  "User #36": {
+    "purchases": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 87
+      },
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care",
+        "score": 72
+      }
+    ]
+  },
+  "User #37": {
+    "purchases": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 79
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 84
+      }
+    ]
+  },
+  "User #38": {
+    "purchases": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 73
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 85
+      }
+    ]
+  },
+  "User #39": {
+    "purchases": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 71
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 78
+      }
+    ]
+  },
+  "User #40": {
+    "purchases": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 70
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 71
+      }
+    ]
+  },
+  "User #41": {
+    "purchases": [
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 77
+      },
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 82
+      }
+    ]
+  },
+  "User #42": {
+    "purchases": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 88
+      },
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 76
+      }
+    ]
+  },
+  "User #43": {
+    "purchases": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 81
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 84
+      }
+    ]
+  },
+  "User #44": {
+    "purchases": [
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 71
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 83
+      }
+    ]
+  },
+  "User #45": {
+    "purchases": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B01DK8E4Q4",
+        "name": "HangZ Gallery Picture Wire",
+        "category": "Tools & Home Improvement",
+        "score": 75
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 83
+      }
+    ]
+  },
+  "User #46": {
+    "purchases": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement",
+        "score": 81
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 71
+      }
+    ]
+  },
+  "User #47": {
+    "purchases": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 74
+      },
+      {
+        "id": "B0C7KGYLXQ",
+        "name": "MISERWE 360 Rotating Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 83
+      }
+    ]
+  },
+  "User #48": {
+    "purchases": [
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B096KBSF4H",
+        "name": "Kitsch Spiral Hair Ties",
+        "category": "Beauty & Personal Care",
+        "score": 90
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement",
+        "score": 81
+      }
+    ]
+  },
+  "User #49": {
+    "purchases": [
+      {
+        "id": "B07TVN712W",
+        "name": "Wisconic Bottle Buddy Storage Rack",
+        "category": "Tools & Home Improvement"
+      },
+      {
+        "id": "B08FLH3MCQ",
+        "name": "LASCO Ice Maker Inline Filter",
+        "category": "Tools & Home Improvement"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care",
+        "score": 76
+      },
+      {
+        "id": "B07M689Z7R",
+        "name": "Wahl USA Elite Pro Haircut Kit",
+        "category": "Beauty & Personal Care",
+        "score": 77
+      }
+    ]
+  },
+  "User #50": {
+    "purchases": [
+      {
+        "id": "B00VPVEVSK",
+        "name": "Colossal Foot File",
+        "category": "Beauty & Personal Care"
+      },
+      {
+        "id": "B0BVT495MF",
+        "name": "Tweezerman Slant Tweezer",
+        "category": "Beauty & Personal Care"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "B072KL5GZB",
+        "name": "Sorbus Makeup Organizer",
+        "category": "Beauty & Personal Care",
+        "score": 88
+      },
+      {
+        "id": "B01FGYVUTE",
+        "name": "ALHAKIN Wall Mounted Makeup Mirror",
+        "category": "Beauty & Personal Care",
+        "score": 89
+      }
+    ]
+  }
+}
