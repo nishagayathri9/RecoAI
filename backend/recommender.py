@@ -1,7 +1,7 @@
 import numpy as np
 
 class GroupRecommender:
-    def _init_(self, df, seed=42, title_max_len=50):
+    def __init__(self, df, seed=42, title_max_len=50):
         self.df = df
         self.seed = seed
         self.title_max_len = title_max_len
