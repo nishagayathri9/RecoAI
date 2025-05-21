@@ -71,7 +71,7 @@ const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Link to="/test" className="btn-primary group">
+            <Link to="/dashboard" className="btn-primary group">
               <ShoppingCart className="mr-2 h-5 w-5" />
               Try Demo
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
