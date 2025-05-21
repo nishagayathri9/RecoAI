@@ -2,6 +2,8 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart3 } from 'lucide-react';
 import usersData from '../../assets/data/simulated_user_recommendations.json';
+import defaultUsersData from '../../assets/data/simulated_user_recommendations.json';
+import largeUsersData from '../../assets/data/large_electronics_clothes_users.json';
 
 export interface Product {
   id: string;
@@ -21,8 +23,9 @@ export interface UsersData {
 
 const MAX_LIST_HEIGHT = 'calc(100vh - 8rem)'; // adjust as needed for layout
 
-const ProductRecommendationsDashboard: React.FC = React.memo(() => {
-  const users: UsersData = usersData;
+type Props = { data?: UsersData };
+const ProductRecommendationsDashboard: React.FC<Props> = React.memo(({ data }) => {
+  const users: UsersData = data ?? defaultUsersData;
   const userKeys = useMemo(
     () => Object.keys(users) as Array<keyof UsersData>,
     [users]

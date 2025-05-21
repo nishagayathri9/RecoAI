@@ -6,7 +6,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { datasetAnalysis } from '../utils/datasetAnalysis';
-import ProductRecommendationsDashboard from '../components/dashboard/ProductRecommendationsDashboard';
+import ProductRecommendationsDashboard, { UsersData } from '../components/dashboard/ProductRecommendationsDashboard';
+import simRecData from '../assets/data/simulated_user_recommendations.json';
+import largeElectronicsClothesUsers from '../assets/data/large_electronics_clothes_users.json';
+
 
 // Components
 import FileUploader from '../components/dashboard/FileUploader';
@@ -33,6 +36,7 @@ const UserDashboardPage: React.FC = () => {
   const [processingComplete, setProcessingComplete] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [datasetMetrics, setDatasetMetrics] = useState<DatasetMetrics | null>(null);
+  const [recommendationsData, setRecommendationsData] = useState<UsersData | null>(null);
 
 
   useEffect(() => {
@@ -52,6 +56,7 @@ const UserDashboardPage: React.FC = () => {
     if (files.length === 0) return;
 
     const fileToUpload = files[0].file;
+    const fileName = fileToUpload.name;
     const formData = new FormData();
     formData.append('data_file', fileToUpload);
 
@@ -88,6 +93,14 @@ const UserDashboardPage: React.FC = () => {
 
       const metrics = await datasetAnalysis(fileToUpload);
       console.log('[📊] File Analysis Metrics:', metrics);
+
+      let selectedData: UsersData = simRecData;
+      if (fileName === 'preprocessed_beauty_tools_train_dataset_TRAIN.CSV') {
+        selectedData = simRecData;
+      } else if (fileName === 'preprocessed_beauty_tools_train_dataset_TEST.csv') {
+        selectedData = largeElectronicsClothesUsers;
+      }
+      setRecommendationsData(selectedData);
 
       setDatasetMetrics(metrics);
       setProcessingComplete(true);
@@ -306,14 +319,14 @@ const UserDashboardPage: React.FC = () => {
             )}
 
             {/* --- Product Recommendations Section --- */}
-            {showDashboard && (
+            {showDashboard && recommendationsData && (
               <motion.div
                 className="mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <ProductRecommendationsDashboard />
+                <ProductRecommendationsDashboard data={recommendationsData} />
               </motion.div>
             )}
           </div>

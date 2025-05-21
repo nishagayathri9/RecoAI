@@ -43,6 +43,26 @@ FEATURES = {
     'material_encoded'
 }
 
+@app.get(
+    "/metadata/",
+    summary="Get metadata loading status",
+    responses={
+        200: {"description": "Metadata status"},
+        503: {"description": "Metadata not uploaded yet"}
+    }
+)
+def get_metadata():
+    """
+    Returns whether user/item tables are loaded, and if so:
+      - num_users: how many user rows uploaded
+      - num_items: how many item rows uploaded
+      - meta_dim: total feature length (u_feats + i_feats)
+    """
+    if FEATURES is None:
+        raise HTTPException(503, "No metadata uploaded yet; please POST to /upload/ first")
+    return {
+        FEATURES
+    }
 
 @app.post("/upload/")
 async def upload(data_file: UploadFile = File(...)):
@@ -75,78 +95,14 @@ async def upload(data_file: UploadFile = File(...)):
         "features": sorted(actual)
     }
 
-class RecommendRequest(BaseModel):
-    cold_start_ids: Optional[List[int]] = None
-    users_per_cat: int = 25
-    top_k: int = 5       
+class PredictRequest(BaseModel):
+    u_idx: 5
+    i_idx: 6
 
+# Example predict functions without any recommender attached
 
-# ─── Group Recommendation Endpoint ─────────────────────────────────────────
-@app.post("/group_recommend/")
-async def group_recommend(req: RecommendRequest):
-    """
-    Runs the GroupRecommender on the uploaded DataFrame and returns
-    each user's past history + category‐based top-K recs.
-    """
-    # 1) Check that data is loaded
-    if RAW_DF is None:
-        raise HTTPException(
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-            {
-                "detail": "No data uploaded",
-                "message": "Please POST to /upload/ first"
-            }
-        )
-
-    # 2) Validate request parameters
-    if req.top_k < 1:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            {
-                "detail": "`top_k` must be at least 1",
-                "received": req.top_k
-            }
-        )
-    if req.users_per_cat < 1:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            {
-                "detail": "`users_per_cat` must be at least 1",
-                "received": req.users_per_cat
-            }
-        )
-
-    # 3) Attempt recommendation
-    try:
-        recommender = GroupRecommender(RAW_DF)
-        result = recommender.recommend(
-            cold_start_ids=req.cold_start_ids,
-            users_per_cat=req.users_per_cat,
-            top_k=req.top_k
-                )
-    except KeyError as e:
-        # e.g. missing expected column in RAW_DF
-        raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-            {
-                "detail": "Data format error",
-                "missing_column": str(e)
-            }
-        )
-    except Exception as e:
-        # catch-all for unexpected errors
-        raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-            {
-                "detail": "Recommendation generation failed",
-                "error": str(e)
-            }
-        )
-
-    # 4) Return success payload
-    return {
-        "message": "Recommendations generated successfully",
-        "cold_ids": result["cold_ids"],
-        "results": result["results"]
-    }
-#get to output the results
+@app.post("/predict/simple/", summary="Simple predict")
+def predict_simple(req: PredictRequest):
+    # just compute a linear combination
+    score = req.u_idx * 0.1 + req.i_idx * 0.05
+    return score
