@@ -9,7 +9,6 @@ import RootLayout from './layouts/RootLayout';
 import HomePage from './pages/HomePage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import PlaygroundPage from './pages/PlaygroundPage';
-import Test from './pages/Test.js';
 import UserDashboardPage from './pages/UserDashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -23,7 +22,6 @@ function App() {
             <Route path="how-it-works" element={<HowItWorksPage />} />
             <Route path="playground" element={<PlaygroundPage />} />
             <Route path="dashboard" element={<UserDashboardPage />} />
-            <Route path="test" element={<Test />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

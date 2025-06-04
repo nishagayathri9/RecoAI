@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import dashboardPic from '../assets/dashboardpic.png';
-
+import Navbar from '../components/common/Navbar'; // ← make sure this path is correct
 // Components
 import Hero from '../components/home/Hero';
 import Features from '../components/home/Features';
@@ -16,6 +16,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
+      <Navbar />
       <Hero />
       <Features />
       

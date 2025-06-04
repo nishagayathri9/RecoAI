@@ -11,6 +11,22 @@ import ScatterPlot3D, { ScatterPlot3DHandle } from '../components/playground/Sca
 import ControlPanel from '../components/playground/ControlPanel';
 
 const PlaygroundPage: React.FC = () => {
+
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDarkMode) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
   const [isFullscreen, setIsFullscreen] = useState(false);
   const ref3dView = useRef<HTMLDivElement>(null);
   const plotRef = useRef<ScatterPlot3DHandle>(null);
@@ -32,6 +48,7 @@ const PlaygroundPage: React.FC = () => {
   };
   
   const handleRotate = () => {
+
     plotRef.current?.toggleRotate();
   };
   
