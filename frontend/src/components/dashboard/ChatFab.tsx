@@ -1,6 +1,5 @@
 import React, { useId, useState, useEffect } from 'react';
 import { Brain, X, Lightbulb, TrendingUp } from 'lucide-react';
-import { testGeminiApiKey, listGeminiModels } from '../../utils/xai/gemini';
 
 /* ───── placeholder data ───── */
 const demoExplanation = {
@@ -16,20 +15,8 @@ const demoExplanation = {
 
 const ChatFab: React.FC = () => {
   const [open, setOpen] = useState(false);
-  // 1 = Reasoning, 2 = Key Factors
   const [activeTab, setActiveTab] = useState<1 | 2>(1);
-  const uid = useId();
 
-  // On component mount, check the Gemini API key and list available models
-  useEffect(() => {
-    const key = import.meta.env.VITE_GEMINI_API_KEY || '';
-    if (!key) {
-      console.error('🚨 VITE_GEMINI_API_KEY is missing or empty');
-      return;
-    }
-    testGeminiApiKey(key);
-    listGeminiModels(key);
-  }, []);
 
   return (
     <>
