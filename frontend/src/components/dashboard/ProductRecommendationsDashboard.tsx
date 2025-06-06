@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart3 } from 'lucide-react';
 import usersData from '../../assets/data/simulated_user_recommendations.json';
 import defaultUsersData from '../../assets/data/simulated_user_recommendations.json';
-import largeUsersData from '../../assets/data/large_electronics_clothes_users.json';
+import largeUsersData from '../../assets/data/users.json';
 
 export interface Product {
   id: string;

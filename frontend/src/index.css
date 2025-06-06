@@ -58,6 +58,38 @@ body {
     pointer-events: none;
   }
   
+  .glowing-node {
+  animation: pulse 2s infinite;
+}
+
+  @keyframes pulse {
+    0% { filter: drop-shadow(0 0 0.25rem rgba(139, 92, 246, 0.7)); }
+    50% { filter: drop-shadow(0 0 0.5rem rgba(139, 92, 246, 1)); }
+    100% { filter: drop-shadow(0 0 0.25rem rgba(139, 92, 246, 0.7)); }
+  }
+
+  .layer-transition {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  }
+
+  .tree-node {
+    @apply relative pl-6;
+  }
+
+  .tree-node::before {
+    content: "";
+    @apply absolute left-0 top-0 h-full w-px bg-gray-700;
+  }
+
+  .tree-node::after {
+    content: "";
+    @apply absolute left-0 top-3 w-4 h-px bg-gray-700;
+  }
+
+  .tree-node:last-child::before {
+    @apply h-3;
+  }
+
   .btn {
     @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-200 ease-in-out;
   }

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { datasetAnalysis } from '../utils/datasetAnalysis';
 import ProductRecommendationsDashboard, { UsersData } from '../components/dashboard/ProductRecommendationsDashboard';
 import simRecData from '../assets/data/simulated_user_recommendations.json';
-import largeElectronicsClothesUsers from '../assets/data/large_electronics_clothes_users.json';
+import largeElectronicsClothesUsers from '../assets/data/users.json';
 
 
 // Components

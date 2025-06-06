@@ -8,28 +8,69 @@ import { Link } from 'react-router-dom';
 
 // Components
 import ScatterPlot3D, { ScatterPlot3DHandle } from '../components/playground/ScatterPlot3D';
+import { NetworkVisualization } from '../components/playground/NetworkVisualization';
 import ControlPanel from '../components/playground/ControlPanel';
+import { SampleSelector } from '../components/playground/SampleSelector';
+import { StepControls } from '../components/playground/StepControls';
+import { useStore } from '../store/index';
+import { StorytellingPanel } from '../components/playground/StorytellingPanel';
+import { SummaryTree } from '../components/playground/SummaryTree';
 
 const PlaygroundPage: React.FC = () => {
 
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
+  const selectedSample = useStore((s) => s.selectedSample);
+  const plotRef = useRef<ScatterPlot3DHandle>(null);
+  const [showScatter, setShowScatter] = useState(false);
 
+  const { 
+  currentStep, 
+  isPlaying, 
+  layers, 
+  nextStep, 
+  highlightLayer,
+  setPlaying 
+  } = useStore();
+
+
+ // Auto-play functionality
   useEffect(() => {
-    const root = document.documentElement;
-    if (isDarkMode) {
-      root.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+    let interval: NodeJS.Timeout;
+    
+    if (isPlaying && selectedSample) {
+      interval = setInterval(() => {
+        nextStep();
+      }, 2500);
     }
-  }, [isDarkMode]);
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isPlaying, selectedSample, nextStep]);
+
+  // Highlight layers based on current step
+  useEffect(() => {
+    if (selectedSample && currentStep > 0) {
+      const layerIndex = Math.min(currentStep - 1, layers.length - 1);
+      const currentLayer = layers[layerIndex];
+      if (currentLayer) {
+        highlightLayer(currentLayer.id);
+      }
+    } else {
+      highlightLayer(null);
+    }
+  }, [currentStep, layers, highlightLayer, selectedSample]);
+
+  // Stop playing when reaching max steps
+  useEffect(() => {
+    if (currentStep >= 6) {
+      setPlaying(false);
+    }
+  }, [currentStep, setPlaying]);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const ref3dView = useRef<HTMLDivElement>(null);
-  const plotRef = useRef<ScatterPlot3DHandle>(null);
   
   useEffect(() => {
     document.title = 'Interactive Playground - RecoAI';
@@ -87,6 +128,7 @@ const PlaygroundPage: React.FC = () => {
 
   return (
     <div className="pt-24">
+
       {/* Hero Section */}
       <section className="section bg-background-secondary relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background to-background-secondary"></div>
@@ -100,7 +142,7 @@ const PlaygroundPage: React.FC = () => {
               transition={{ duration: 0.6 }}
             >
               <h1 className="heading-xl mb-6">
-                Interactive <span className="gradient-text">Embedding</span> Playground
+                Interactive <span className="gradient-text">Playground</span> 
               </h1>
             </motion.div>
             
@@ -116,19 +158,69 @@ const PlaygroundPage: React.FC = () => {
           </div>
         </div>
       </section>
-      
-      {/* Main Visualization */}
+
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* 1) Always show the SampleSelector at top */}
+        <div className="mb-8">
+          <SampleSelector />
+        </div>
+
+        {!selectedSample ? (
+          <div className="h-[800px]"> {/* adjust as needed */}
+            <NetworkVisualization />
+          </div>
+        ) : (
+          <>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              {/* Left column: spans 2 of 3 columns, fixed height */}
+              <div className="lg:col-span-2 h-[700px]">
+                <NetworkVisualization />
+              </div>
+
+              {/* Right column: StepControls, same height */}
+              <div className="lg:col-span-1 h-[700px] flex">
+                <div className="h-full w-full flex flex-col overflow-y-auto">
+                  <StepControls />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <SummaryTree />
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+
+       {/* ─── Main Visualization ─── */}
       <section className="section bg-background relative">
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            {/* Left three columns: either a button or the actual 3D plot */}
             <div className="lg:col-span-3">
-              <div className="relative" ref={ref3dView}>
-                <div className="absolute top-4 right-4 z-10">
-                </div>
-                <ScatterPlot3D height="600px" ref={plotRef} />
+              <div className="relative">
+                {/* If showScatter is false, show a placeholder button instead */}
+                {!showScatter ? (
+                  <div className="h-[600px] flex items-center justify-center bg-background-tertiary/50 rounded-xl border border-white/10">
+                    <button
+                      onClick={() => setShowScatter(true)}
+                      className="px-6 py-3 bg-primary hover:bg-primary-700 text-white rounded-lg transition-colors"
+                    >
+                      Load 3D Visualization
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative" ref={ref3dView}>
+                    <ScatterPlot3D height="600px" ref={plotRef} />
+                  </div>
+                )}
               </div>
-              
-              {/* Product Insights */}
+
+              {/* Product Insights (unchanged) */}
               <div className="mt-6 bg-background-tertiary rounded-xl p-5 border border-white/10">
                 <h3 className="text-xl font-semibold flex items-center mb-4">
                   <LayoutGrid className="mr-2 h-5 w-5 text-primary" />
@@ -140,7 +232,15 @@ const PlaygroundPage: React.FC = () => {
                   <div className="bg-background/30 rounded-lg p-4">
                     <h4 className="font-medium mb-2">Category Distribution</h4>
                     <div className="space-y-2">
-                      {categoryData.map((cat, idx) => {
+                      {[
+                        { name: 'Beauty & Personal Care', pct: 25 },
+                        { name: 'Electronics', pct: 22.9 },
+                        { name: 'Tools & Home Improvement', pct: 21.3 },
+                        { name: 'Clothing, Shoes & Jewelry', pct: 20.9 },
+                        { name: 'Power & Hand Tools', pct: 5.1 },
+                        { name: 'Shoe, Jewelry & Watch Accessories', pct: 3.1 },
+                        { name: 'Car & Vehicle Electronics', pct: 1.7 },
+                      ].map((cat, idx) => {
                         const barWidth = Math.max(cat.pct, 5);
                         return (
                           <div key={idx} className="space-y-1">
@@ -149,7 +249,10 @@ const PlaygroundPage: React.FC = () => {
                               <span>{cat.pct}%</span>
                             </div>
                             <div className="w-full bg-background/50 rounded-full h-2">
-                              <div className="bg-primary h-2 rounded-full" style={{ width: `${barWidth}%` }} />
+                              <div
+                                className="bg-primary h-2 rounded-full"
+                                style={{ width: `${barWidth}%` }}
+                              />
                             </div>
                           </div>
                         );
@@ -160,34 +263,45 @@ const PlaygroundPage: React.FC = () => {
                   <div className="bg-background/30 rounded-lg p-4">
                     <h4 className="font-medium mb-2">Cluster Density</h4>
                     <div className="space-y-2">
-                      {['High','Low','High','Medium','Low','Medium','High'].map((bucket, idx) => (
-                        <div key={idx} className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-white/70">Cluster {idx + 1}</span>
-                            <span>{bucket}</span>
+                      {['High', 'Low', 'High', 'Medium', 'Low', 'Medium', 'High'].map(
+                        (bucket, idx) => (
+                          <div key={idx} className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-white/70">Cluster {idx + 1}</span>
+                              <span>{bucket}</span>
+                            </div>
+                            <div className="w-full bg-background/50 rounded-full h-2">
+                              <div
+                                className="bg-primary h-2 rounded-full"
+                                style={{
+                                  width:
+                                    bucket === 'High'
+                                      ? '85%'
+                                      : bucket === 'Medium'
+                                      ? '50%'
+                                      : '15%',
+                                }}
+                              ></div>
+                            </div>
                           </div>
-                          <div className="w-full bg-background/50 rounded-full h-2">
-                            <div className="bg-primary h-2 rounded-full" style={{ width: bucket === 'High' ? '85%' : bucket === 'Medium' ? '50%' : '15%' }}></div>
-                          </div>
-                        </div>
-                      ))}
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            
+            {/* Right column: Control Panel (buttons will do nothing until scatter is visible) */}
             <div className="lg:col-span-1">
-            <ControlPanel
-              onReset={handleReset}
-              onZoomIn={handleZoomIn}
-              onZoomOut={handleZoomOut}
-              onRotate={handleRotate}
-              onMoveCamera={handleMoveCamera}
-              plotRef={plotRef}            // ← keep only this
-            />
-              
+              <ControlPanel
+                onReset={handleReset}
+                onZoomIn={handleZoomIn}
+                onZoomOut={handleZoomOut}
+                onRotate={handleRotate}
+                onMoveCamera={handleMoveCamera}
+                plotRef={plotRef}
+              />
             </div>
           </div>
         </div>

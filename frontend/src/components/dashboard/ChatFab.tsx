@@ -1,22 +1,57 @@
-import React, { useId, useState, useEffect } from 'react';
+// frontend/src/components/dashboard/ChatFab.tsx
+import React, { useState, useEffect } from 'react';
 import { Brain, X, Lightbulb, TrendingUp } from 'lucide-react';
-
-/* ───── placeholder data ───── */
-const demoExplanation = {
-  reasoning:
-    'Based on recent behaviour, this user shows strong interest in both Electronics and Sportswear. The model surfaces complementary accessories bought by profiles with similar patterns.',
-  factors: [
-    'High engagement with Electronics',
-    'Purchased running shoes last week',
-    'Similar users buy smart-watches'
-  ],
-  confidence: 82,
-};
 
 const ChatFab: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<1 | 2>(1);
+  const [reasoning, setReasoning] = useState<string>('Loading...');
+  // Initialize as an array of strings
+  const [keyFactors, setKeyFactors] = useState<string[]>(['Loading...']);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
+  // ─── When the panel opens, pick a random user (EC001–EC005) and fetch from API ─────────────
+  useEffect(() => {
+    if (!open) return;
+
+    (async () => {
+      // 1) Randomize user between EC001–EC005
+      const randNum = Math.floor(Math.random() * 5) + 1; // 1–5
+      const userId = `User #EC00${randNum}`;
+      setSelectedUser(userId);
+
+      try {
+        const encodedUser = encodeURIComponent(userId);
+
+        // 2) Fetch reasoning
+        const reasoningResp = await fetch(
+          `http://localhost:3000/api/reasoning?userId=${encodedUser}`
+        );
+        const reasoningJson = await reasoningResp.json();
+        setReasoning(reasoningJson.reasoning || 'No reasoning returned');
+
+        // 3) Fetch key factors
+        const keyFactorsResp = await fetch(
+          `http://localhost:3000/api/key-factors?userId=${encodedUser}`
+        );
+        const keyFactorsJson = await keyFactorsResp.json();
+
+        // Split on newlines and strip any leading hyphens/spaces
+        const factorsArray: string[] = (keyFactorsJson.keyFactors || '')
+          .split('\n')
+          .map((line: string) => line.replace(/^[-\s]*/, '').trim())
+          .filter((line: string) => line.length > 0);
+
+        setKeyFactors(
+          factorsArray.length > 0 ? factorsArray : ['No key factors returned']
+        );
+      } catch (err) {
+        console.error('[💥] Error fetching AI insights:', err);
+        setReasoning('Error loading reasoning');
+        setKeyFactors(['Error loading key factors']);
+      }
+    })();
+  }, [open]);
 
   return (
     <>
@@ -26,7 +61,10 @@ const ChatFab: React.FC = () => {
         className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-primary text-white rounded-full
                    shadow-lg flex items-center justify-center transition hover:scale-105"
         style={{ boxShadow: '0 4px 24px rgba(120,8,208,0.15)' }}
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          setActiveTab(1);
+          setOpen(!open);
+        }}
       >
         {open ? <X className="w-8 h-8" /> : <Brain className="w-8 h-8" />}
       </button>
@@ -42,7 +80,9 @@ const ChatFab: React.FC = () => {
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
             <div className="flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-yellow-400" />
-              <span className="font-semibold text-base">AI Insights • User EC-Demo-001</span>
+              <span className="font-semibold text-base">
+                AI Insights • {selectedUser || 'Loading...'}
+              </span>
             </div>
             <button
               aria-label="Close"
@@ -116,23 +156,21 @@ const ChatFab: React.FC = () => {
             {/* Pane 1: Reasoning */}
             {activeTab === 1 && (
               <section className="pane space-y-3 mt-3">
-                <p className="text-sm leading-relaxed text-white/90">
-                  {demoExplanation.reasoning}
-                </p>
+                <p className="text-sm leading-relaxed text-white/90">{reasoning}</p>
               </section>
             )}
 
-            {/* Pane 2: Factors */}
+            {/* Pane 2: Key Factors */}
             {activeTab === 2 && (
               <section className="pane space-y-3 mt-3">
-                {demoExplanation.factors.map((f, i) => (
+                {keyFactors.map((factor: string, idx: number) => (
                   <div
-                    key={i}
+                    key={idx}
                     className="flex items-start gap-3 p-3 rounded-lg bg-white/5
                                hover:bg-white/10 transition-colors"
                   >
                     <TrendingUp className="text-indigo-400 mt-1 flex-shrink-0" size={16} />
-                    <p className="text-sm text-white/80">{f}</p>
+                    <p className="text-sm text-white/80">{factor}</p>
                   </div>
                 ))}
               </section>
