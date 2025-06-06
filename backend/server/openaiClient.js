@@ -11,6 +11,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Remove or switch to process.env.OPENAI_API_KEY when you’re ready.
 const openai = new OpenAI({
   // add api key
+  apiKey: "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"
+
 });
 
 console.log(">>> DEBUG: Using hard-coded OPENAI_API_KEY in openaiClient.js");
@@ -72,9 +74,9 @@ export async function generateInsightsForUser(userId) {
       "You are an AI Insights engine.  " +
       "Given a single e-commerce user’s purchase history and top-5 recommendations, " +
       "produce EXACTLY TWO labeled sections:\n\n" +
-      "1) Reasoning: Write a single paragraph no more than 50 words explaining why these items were recommended.\n" +
-      "2) Key Factors: Write exactly 3 bullet points (each bullet no more than 10 words) highlighting the most important observations.\n\n" +
-      "Output ONLY those two sections—no extra text or headings.",
+      "1) Reasoning: Write one short paragraph (≤50 words) that explains the **overall connection** between the user’s purchases and the recommendations. Focus on patterns in theme, format, or purpose — but **avoid listing product traits directly**.\n\n" +
+      "2) Key Factors: Write exactly 3 bullet points (≤12 words each) that highlight *why these specific recommendations were made*. Focus only on patterns or traits clearly shared between purchases and recommendations. Avoid vague product benefits, lifestyle guesses, or category-level descriptions.\n\n" +
+      "Make the tone friendly and engaging. Don’t use technical words or generic phrases like 'electronics improve convenience'. Output only the two sections.",
   };
 
   const userDataForPrompt = {

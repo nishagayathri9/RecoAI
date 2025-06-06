@@ -15,6 +15,7 @@ app.use(express.json());
 /**
  * GET /api/users
  * Returns all user IDs from frontend/src/assets/data/users.json
+ * http://localhost:3000/api/users
  */
 app.get("/api/users", async (req, res) => {
   try {
@@ -44,6 +45,8 @@ app.get("/api/users", async (req, res) => {
  * GET /api/reasoning?userId=<userId>
  * Returns { reasoning: <text> } for the given userId.
  * Caches per‐user so each user triggers only one OpenAI call.
+ * http://localhost:3000/api/reasoning?userId=User%20%23EC001
+ * 
  */
 app.get("/api/reasoning", async (req, res) => {
   const userId = req.query.userId;
@@ -62,6 +65,7 @@ app.get("/api/reasoning", async (req, res) => {
 /**
  * GET /api/key-factors?userId=<userId>
  * Returns { keyFactors: <text> } for the given userId.
+ * http://localhost:3000/api/key-factors?userId=User%20%23EC001
  */
 app.get("/api/key-factors", async (req, res) => {
   const userId = req.query.userId;
