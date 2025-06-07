@@ -13,14 +13,14 @@ import ControlPanel from '../components/playground/ControlPanel';
 import { SampleSelector } from '../components/playground/SampleSelector';
 import { StepControls } from '../components/playground/StepControls';
 import { useStore } from '../store/index';
-import { StorytellingPanel } from '../components/playground/StorytellingPanel';
 import { SummaryTree } from '../components/playground/SummaryTree';
 
 const PlaygroundPage: React.FC = () => {
 
-  const selectedSample = useStore((s) => s.selectedSample);
+  const { selectedSample, showSummary } = useStore();
   const plotRef = useRef<ScatterPlot3DHandle>(null);
   const [showScatter, setShowScatter] = useState(false);
+  
 
   const { 
   currentStep, 
@@ -64,7 +64,7 @@ const PlaygroundPage: React.FC = () => {
 
   // Stop playing when reaching max steps
   useEffect(() => {
-    if (currentStep >= 6) {
+    if (currentStep >= 7) {
       setPlaying(false);
     }
   }, [currentStep, setPlaying]);
@@ -187,9 +187,11 @@ const PlaygroundPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="mb-8">
-              <SummaryTree />
-            </div>
+            {selectedSample && showSummary && (
+              <div className="mb-8">
+                <SummaryTree />
+              </div>
+            )}
           </>
         )}
       </div>

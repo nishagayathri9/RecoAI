@@ -1,240 +1,632 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text, Line } from '@react-three/drei';
-import { useStore } from '../../store/index';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, Text, Line, Box, Cylinder, Sphere } from '@react-three/drei';
+import { LayerInfo, useStore } from '../../store/index';
+import FlowParticles from './FlowParticles'; 
+
 import * as THREE from 'three';
 
-const NetworkBlock: React.FC<{
+
+interface ProfessionalDataFlowProps {
+  fromLayer: any;
+  toLayer:   any;
+  isActive:  boolean;
+}
+
+/**
+ * Professional neural network layer representations based on the reference image
+ */
+function getLayerGeometry(layer: any): [React.ReactNode, [number, number, number]] {
+  const baseProps = { 
+    castShadow: true,
+    receiveShadow: true
+  };
+
+  const SwirlElement: React.FC<{ index: number }> = ({ index }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      const time = state.clock.elapsedTime + index * Math.PI / 3;
+      const radius = 1.3;
+      meshRef.current.position.x = Math.cos(time * 2) * radius;
+      meshRef.current.position.z = Math.sin(time * 2) * radius;
+      meshRef.current.position.y = Math.sin(time * 3) * 0.5;
+    }
+  });
+
+  return (
+    <Box ref={meshRef} args={[0.1, 0.8, 0.1]} castShadow receiveShadow>
+      <meshStandardMaterial 
+        color="#ffffff" 
+        metalness={0.8} 
+        roughness={0.2}
+        emissive="#ffffff"
+        emissiveIntensity={0.3}
+        transparent
+        opacity={0.6}
+      />
+    </Box>
+  );
+};
+
+  switch (layer.id) {
+    case 'input':
+      // Large input feature matrix - like the leftmost layer in the image
+      return [
+        <group key="input-group">
+          <Box args={[0.3, 4, 3]} {...baseProps}>
+            <meshStandardMaterial 
+              color="#4f46e5" 
+              metalness={0.1} 
+              roughness={0.8}
+              transparent
+              opacity={0.9}
+            />
+          </Box>
+          {/* Grid pattern to show feature matrix */}
+          {Array.from({ length: 12 }, (_, i) => (
+            <Box 
+              key={i}
+              args={[0.32, 0.25, 0.2]} 
+              position={[0, (i - 5.5) * 0.3, (i % 3 - 1) * 0.8]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color="#6366f1" 
+                metalness={0.2} 
+                roughness={0.6}
+                transparent
+                opacity={0.7}
+              />
+            </Box>
+          ))}
+        </group>,
+        [0.3, 4, 3]
+      ];
+      
+    case 'embedding_user':
+    case 'embedding_item': 
+    case 'embedding_context':
+      // Dense embedding blocks - smaller, more compact
+      return [
+        <group key={`${layer.id}-group`}>
+          <Box args={[0.8, 2.5, 1.5]} {...baseProps}>
+            <meshStandardMaterial 
+              color={layer.color}
+              metalness={0.3}
+              roughness={0.4}
+              transparent
+              opacity={0.85}
+            />
+          </Box>
+          {/* Internal structure showing embedding dimensions */}
+          {Array.from({ length: 8 }, (_, i) => (
+            <Box 
+              key={i}
+              args={[0.82, 0.25, 0.1]} 
+              position={[0, (i - 3.5) * 0.3, 0.6]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color="#ffffff" 
+                metalness={0.8} 
+                roughness={0.2}
+                transparent
+                opacity={0.6}
+              />
+            </Box>
+          ))}
+        </group>,
+        [0.8, 2.5, 1.5]
+      ];
+      
+    case 'dien_extractor':
+      // GRU layers - stacked recurrent blocks
+      return [
+        <group key="gru-group">
+          {[0, 0.6, 1.2].map((y, i) => (
+            <Box 
+              key={i}
+              args={[1.2, 0.4, 2]} 
+              position={[0, y - 0.6, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color={layer.color}
+                metalness={0.4}
+                roughness={0.3}
+                transparent
+                opacity={0.8}
+              />
+            </Box>
+          ))}
+          {/* GRU gates representation */}
+          {Array.from({ length: 6 }, (_, i) => (
+            <Sphere 
+              key={i}
+              args={[0.08]} 
+              position={[
+                (i % 3 - 1) * 0.4,
+                Math.floor(i / 3) * 0.6 - 0.3,
+                0.8
+              ]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color="#fbbf24" 
+                metalness={0.9} 
+                roughness={0.1}
+                emissive="#fbbf24"
+                emissiveIntensity={0.3}
+              />
+            </Sphere>
+          ))}
+        </group>,
+        [1.2, 1.2, 2]
+      ];
+      
+    case 'dien_evolution':
+      // AUGRU with attention - more complex structure
+      return [
+        <group key="augru-group">
+          <Box args={[1.5, 1, 2.2]} {...baseProps}>
+            <meshStandardMaterial 
+              color={layer.color}
+              metalness={0.5}
+              roughness={0.2}
+              transparent
+              opacity={0.8}
+            />
+          </Box>
+          {/* Attention mechanism visualization */}
+          {Array.from({ length: 8 }, (_, i) => (
+            <Box 
+              key={i}
+              args={[0.05, 0.8, 0.05]}
+              position={[
+                (i % 4 - 1.5) * 0.3,
+                0,
+                Math.floor(i / 4) * 0.8 - 0.4
+              ]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color="#f59e0b" 
+                metalness={0.8} 
+                roughness={0.1}
+                emissive="#f59e0b"
+                emissiveIntensity={0.4}
+              />
+            </Box>
+          ))}
+        </group>,
+        [1.5, 1, 2.2]
+      ];
+      
+    case 'deepfm_linear':
+      // Linear component - simple flat layer
+      return [
+        <Box args={[2, 0.3, 1.8]} {...baseProps}>
+          <meshStandardMaterial 
+            color={layer.color}
+            metalness={0.6}
+            roughness={0.2}
+            transparent
+            opacity={0.85}
+          />
+        </Box>,
+        [2, 0.3, 1.8]
+      ];
+      
+    case 'deepfm_fm':
+      // Factorization Machine - cross-interaction representation
+      return [
+        <group key="fm-group">
+          <Box args={[1.8, 0.8, 1.6]} {...baseProps}>
+            <meshStandardMaterial 
+              color={layer.color}
+              metalness={0.4}
+              roughness={0.3}
+              transparent
+              opacity={0.8}
+            />
+          </Box>
+          {/* Cross connections showing factorization */}
+          {Array.from({ length: 12 }, (_, i) => (
+            <Box 
+              key={i}
+              args={[0.02, 0.6, 0.02]}
+              position={[
+                Math.cos(i * Math.PI / 6) * 0.7,
+                0,
+                Math.sin(i * Math.PI / 6) * 0.6
+              ]}
+              rotation={[0, i * Math.PI / 6, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color="#ffffff" 
+                metalness={0.9} 
+                roughness={0.1}
+                emissive="#ffffff"
+                emissiveIntensity={0.3}
+              />
+            </Box>
+          ))}
+        </group>,
+        [1.8, 0.8, 1.6]
+      ];
+      
+    case 'deepfm_deep':
+      // Deep MLP stack - like the conv layers in the image
+      return [
+        <group key="deep-group">
+          {[0, 0.5, 1.0].map((y, i) => (
+            <Box 
+              key={i}
+              args={[1.6 - i * 0.2, 0.4, 1.4 - i * 0.2]} 
+              position={[0, y - 0.5, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color={layer.color}
+                metalness={0.3 + i * 0.1}
+                roughness={0.4 - i * 0.05}
+                transparent
+                opacity={0.8}
+              />
+            </Box>
+          ))}
+          {/* Neural connections between layers */}
+          {Array.from({ length: 15 }, (_, i) => (
+            <Cylinder 
+              key={i}
+              args={[0.02, 0.02, 0.4]}
+              position={[
+                (i % 5 - 2) * 0.25,
+                0.25,
+                (Math.floor(i / 5) - 1) * 0.25
+              ]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color="#64748b" 
+                metalness={0.7} 
+                roughness={0.3}
+                transparent
+                opacity={0.6}
+              />
+            </Cylinder>
+          ))}
+        </group>,
+        [1.6, 1, 1.4]
+      ];
+      
+case 'fusion_layer': {
+  // Fusion layer – sphere with swirling elements
+  const sphereRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (sphereRef.current) {
+      const pulse = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+      sphereRef.current.scale.setScalar(pulse);
+    }
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.02;
+    }
+  });
+
+  return [
+    <group key="fusion-group">
+      <Sphere ref={sphereRef} args={[1.0]} castShadow receiveShadow>
+        <meshStandardMaterial
+          color={layer.color}
+          metalness={0.7}
+          roughness={0.1}
+          transparent
+          opacity={0.85}
+          emissive={layer.color}
+          emissiveIntensity={0.2}
+        />
+      </Sphere>
+
+      <group ref={groupRef}>
+        {Array.from({ length: 6 }, (_, i) => (
+          <SwirlElement key={i} index={i} />
+        ))}
+      </group>
+    </group>,
+    // adjust collision/spacing bounds
+    [2.0, 2.0, 2.0]
+  ];
+}
+
+    case 'output':
+      // Final prediction layer - like the rightmost spheres in the image
+      return [
+        <group key="output-group">
+          {Array.from({ length: 10 }, (_, i) => (
+            <Sphere 
+              key={i}
+              args={[0.15]} 
+              position={[0, (i - 4.5) * 0.3, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color={layer.color}
+                metalness={0.8}
+                roughness={0.1}
+                emissive={layer.color}
+                emissiveIntensity={0.3}
+                transparent
+                opacity={0.9}
+              />
+            </Sphere>
+          ))}
+          {/* Output labels */}
+          {Array.from({ length: 10 }, (_, i) => (
+            <Box 
+              key={`label-${i}`}
+              args={[0.3, 0.15, 0.05]}
+              position={[0.4, (i - 4.5) * 0.3, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial 
+                color="#64748b" 
+                metalness={0.5} 
+                roughness={0.4}
+                transparent
+                opacity={0.7}
+              />
+            </Box>
+          ))}
+        </group>,
+        [0.7, 3, 0.3]
+      ];
+      
+    default:
+      return [
+        <Box args={[1, 1, 1]} {...baseProps}>
+          <meshStandardMaterial color={layer.color} />
+        </Box>,
+        [1, 1, 1]
+      ];
+  }
+}
+
+const ProfessionalNetworkBlock: React.FC<{
   layer: any;
   isHighlighted: boolean;
   isActive: boolean;
 }> = ({ layer, isHighlighted, isActive }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   
-  useFrame((state) => {
-    if (meshRef.current) {
-      if (isHighlighted) {
-        meshRef.current.rotation.y += 0.01;
-        meshRef.current.scale.setScalar(1.1 + Math.sin(state.clock.elapsedTime * 3) * 0.05);
-      } else if (isActive) {
-        meshRef.current.scale.setScalar(1.05);
-      } else {
-        meshRef.current.scale.setScalar(1);
-      }
-    }
+  const [geometry, dims] = getLayerGeometry(layer);
 
-    if (glowRef.current) {
+  useFrame((state) => {
+    if (groupRef.current) {
       if (isHighlighted) {
-        glowRef.current.material.opacity = 0.4 + Math.sin(state.clock.elapsedTime * 4) * 0.2;
+        groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 2) * 0.1;
+        groupRef.current.scale.setScalar(1.05 + Math.sin(state.clock.elapsedTime * 3) * 0.02);
       } else if (isActive) {
-        glowRef.current.material.opacity = 0.2;
+        groupRef.current.scale.setScalar(1.02);
       } else {
-        glowRef.current.material.opacity = 0.1;
+        groupRef.current.scale.setScalar(1);
+        groupRef.current.rotation.y = 0;
       }
     }
   });
 
-  const blockDimensions = layer.blockType === 'wide' ? [2, 0.8, 1] : [1.2, 1.2, 1.2];
-
   return (
-    <group position={layer.position}>
-      {/* Main building block */}
-      <mesh ref={meshRef}>
-        <boxGeometry args={blockDimensions} />
-        <meshStandardMaterial
-          color={layer.color}
-          emissive={layer.color}
-          emissiveIntensity={isHighlighted ? 0.4 : isActive ? 0.2 : 0.1}
-          metalness={0.3}
-          roughness={0.2}
-          transparent
-          opacity={isActive || isHighlighted ? 0.9 : 0.7}
-        />
-      </mesh>
-      
-      {/* Glow effect */}
-      <mesh ref={glowRef}>
-        <boxGeometry args={[blockDimensions[0] * 1.3, blockDimensions[1] * 1.3, blockDimensions[2] * 1.3]} />
-        <meshBasicMaterial
-          color={layer.color}
-          transparent
-          opacity={0.1}
-        />
-      </mesh>
+    <group position={layer.position} ref={groupRef}>
+      {/* Main geometry */}
+      {geometry}
 
-      {/* Connection points */}
+      {/* Connection ports */}
       {layer.connections.length > 0 && (
-        <mesh position={[blockDimensions[0] / 2 + 0.2, 0, 0]}>
-          <sphereGeometry args={[0.1, 8, 8]} />
+        <Cylinder 
+          args={[0.05, 0.05, 0.2]} 
+          position={[dims[0] / 2 + 0.2, 0, 0]}
+          rotation={[0, 0, Math.PI / 2]}
+          castShadow
+          receiveShadow
+        >
           <meshStandardMaterial
-            color={isActive ? '#ffffff' : '#666666'}
-            emissive={isActive ? '#ffffff' : '#000000'}
+            color={isActive ? '#10b981' : '#6b7280'}
+            metalness={0.8}
+            roughness={0.2}
+            emissive={isActive ? '#10b981' : '#000000'}
             emissiveIntensity={isActive ? 0.3 : 0}
           />
-        </mesh>
+        </Cylinder>
       )}
       
-      {/* Input connection point */}
       {layer.id !== 'input' && (
-        <mesh position={[-blockDimensions[0] / 2 - 0.2, 0, 0]}>
-          <sphereGeometry args={[0.1, 8, 8]} />
+        <Cylinder 
+          args={[0.05, 0.05, 0.2]} 
+          position={[-dims[0] / 2 - 0.2, 0, 0]}
+          rotation={[0, 0, Math.PI / 2]}
+          castShadow
+          receiveShadow
+        >
           <meshStandardMaterial
-            color={isActive ? '#ffffff' : '#666666'}
-            emissive={isActive ? '#ffffff' : '#000000'}
+            color={isActive ? '#10b981' : '#6b7280'}
+            metalness={0.8}
+            roughness={0.2}
+            emissive={isActive ? '#10b981' : '#000000'}
             emissiveIntensity={isActive ? 0.3 : 0}
           />
-        </mesh>
+        </Cylinder>
       )}
-      
-      {/* Label */}
+
+      {/* Professional labels */}
       <Text
-        position={[0, blockDimensions[1] / 2 + 0.6, 0]}
-        fontSize={0.25}
-        color="white"
+        position={[0, dims[1] / 2 + 0.8, 0]}
+        fontSize={0.3}
+        color="#ffffff"
         anchorX="center"
         anchorY="middle"
+        fontWeight="bold"
       >
         {layer.name}
       </Text>
-
-      {/* Sub-label for layer type */}
       <Text
-        position={[0, blockDimensions[1] / 2 + 0.3, 0]}
-        fontSize={0.15}
-        color="#888888"
+        position={[0, dims[1] / 2 + 0.4, 0]}
+        fontSize={0.18}
+        color="#94a3b8"
         anchorX="center"
         anchorY="middle"
       >
         {layer.type}
       </Text>
+      <Text
+        position={[0, dims[1] / 2 + 0.1, 0]}
+        fontSize={0.14}
+        color="#64748b"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {layer.dimensions}
+      </Text>
     </group>
   );
 };
 
-const DataFlowParticles: React.FC<{
-  fromLayer: any;
-  toLayer: any;
-  isActive: boolean;
-}> = ({ fromLayer, toLayer, isActive }) => {
-  const particlesRef = useRef<THREE.Points>(null);
-  const [particles] = useState(() => {
-    const count = 20;
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    
-    for (let i = 0; i < count; i++) {
-      const t = i / count;
-      const x = fromLayer.position[0] + (toLayer.position[0] - fromLayer.position[0]) * t;
-      const y = fromLayer.position[1] + (toLayer.position[1] - fromLayer.position[1]) * t;
-      const z = fromLayer.position[2] + (toLayer.position[2] - fromLayer.position[2]) * t;
-      
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
-      
-      colors[i * 3] = 0.4;
-      colors[i * 3 + 1] = 0.6;
-      colors[i * 3 + 2] = 1;
-    }
-    
-    return { positions, colors };
-  });
 
-  useFrame((state) => {
-    if (particlesRef.current && isActive) {
-      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-      const time = state.clock.elapsedTime;
-      
-      for (let i = 0; i < positions.length; i += 3) {
-        const particleIndex = i / 3;
-        const t = (particleIndex / (positions.length / 3) + time * 0.5) % 1;
-        
-        positions[i] = fromLayer.position[0] + (toLayer.position[0] - fromLayer.position[0]) * t;
-        positions[i + 1] = fromLayer.position[1] + (toLayer.position[1] - fromLayer.position[1]) * t + Math.sin(time * 2 + particleIndex) * 0.1;
-        positions[i + 2] = fromLayer.position[2] + (toLayer.position[2] - fromLayer.position[2]) * t;
-      }
-      
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
-    }
-  });
+const ProfessionalDataFlow: React.FC<ProfessionalDataFlowProps> = ({ fromLayer, toLayer, isActive }) => {
+  // Precompute the two end‐points for the line.
+  const points = useMemo(() => {
+    // Optionally offset the endpoints a bit so the line does not cut inside each geometry
+    const OFFSET = 0.6;
 
-  if (!isActive) return null;
+    // Rough “half‐width” of the connecting spheres on each side:
+    const startX = fromLayer.position[0] + OFFSET;
+    const startY = fromLayer.position[1];
+    const startZ = fromLayer.position[2];
 
-  return (
-    <points ref={particlesRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={particles.positions}
-          count={particles.positions.length / 3}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          array={particles.colors}
-          count={particles.colors.length / 3}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.05}
-        transparent
-        opacity={0.8}
-        vertexColors
-        blending={THREE.AdditiveBlending}
-      />
-    </points>
-  );
-};
+    const endX = toLayer.position[0] - OFFSET;
+    const endY = toLayer.position[1];
+    const endZ = toLayer.position[2];
 
-const NetworkConnections: React.FC<{
-  layers: any[];
-  currentStep: number;
-}> = ({ layers, currentStep }) => {
-  const connections = [];
-  const dataFlows = [];
-  
-  layers.forEach((layer, layerIndex) => {
-    layer.connections.forEach((connectionId: string) => {
-      const targetLayer = layers.find(l => l.id === connectionId);
-      if (targetLayer) {
-        const isActive = currentStep > layerIndex;
-        
-        // Connection line
-        connections.push(
-          <Line
-            key={`${layer.id}-${connectionId}`}
-            points={[
-              [layer.position[0] + 0.6, layer.position[1], layer.position[2]],
-              [targetLayer.position[0] - 0.6, targetLayer.position[1], targetLayer.position[2]]
-            ]}
-            color={isActive ? "#6366f1" : "#374151"}
-            lineWidth={isActive ? 4 : 2}
-            transparent
-            opacity={isActive ? 0.8 : 0.3}
-          />
-        );
-
-        // Data flow particles
-        if (isActive) {
-          dataFlows.push(
-            <DataFlowParticles
-              key={`flow-${layer.id}-${connectionId}`}
-              fromLayer={layer}
-              toLayer={targetLayer}
-              isActive={isActive}
-            />
-          );
-        }
-      }
-    });
-  });
+    return [
+      new THREE.Vector3(startX, startY, startZ),
+      new THREE.Vector3(endX,   endY,   endZ),
+    ];
+  }, [fromLayer, toLayer]);
 
   return (
     <>
-      {connections}
-      {dataFlows}
+      {/* 1) Static line: */}
+      <Line
+        points={points}
+        color={isActive ? '#70d8db' : '#374151'}  // bright blue if active, dim gray if not
+        lineWidth={isActive ? 1 : 0.5}
+        transparent
+        opacity={isActive ? 0.8 : 0.25}
+      />
+
+      {/* 2) FlowParticles: */}
+      {isActive && (
+        <FlowParticles
+          fromLayer={fromLayer}
+          toLayer={toLayer}
+          isActive={isActive}
+        />
+      )}
+    </>
+  );
+};
+
+interface ProfessionalConnectionsProps {
+  layers:       any[];
+  currentStep:  number;
+}
+
+const ProfessionalConnections: React.FC<ProfessionalConnectionsProps> = ({ layers, currentStep }) => {
+  const items: JSX.Element[] = [];
+
+  layers.forEach((layer, layerIdx) => {
+    layer.connections.forEach((connId: string) => {
+      const targetLayer = layers.find(l => l.id === connId);
+      if (!targetLayer) return;
+
+      // Only show this connection once layerIdx < currentStep
+      const isActive = currentStep > layerIdx;
+
+      items.push(
+        <ProfessionalDataFlow
+          key={`flow-${layer.id}-${connId}`}
+          fromLayer={layer}
+          toLayer={targetLayer}
+          isActive={isActive}
+        />
+      );
+    });
+  });
+
+  return <>{items}</>;
+};
+
+const ProfessionalEnvironment: React.FC = () => {
+  return (
+    <>
+      {/* Professional lighting setup */}
+      <ambientLight intensity={0.4} color="#f8fafc" />
+      <directionalLight 
+        position={[10, 10, 5]} 
+        intensity={1.2} 
+        color="#ffffff"
+        castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-far={50}
+        shadow-camera-left={-20}
+        shadow-camera-right={20}
+        shadow-camera-top={20}
+        shadow-camera-bottom={-20}
+      />
+      <directionalLight 
+        position={[-5, 5, -5]} 
+        intensity={0.6} 
+        color="#e2e8f0"
+      />
+      <pointLight position={[0, 8, 0]} intensity={0.8} color="#f1f5f9" />
+      
+      {/* Professional grid floor */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]} receiveShadow>
+        <planeGeometry args={[40, 40]} />
+        <meshStandardMaterial 
+          color="#1e293b" 
+          metalness={0.1} 
+          roughness={0.9}
+          transparent
+          opacity={0.8}
+        />
+      </mesh>
+      
+      {/* Grid lines */}
+      {Array.from({ length: 21 }, (_, i) => (
+        <Line
+          key={`grid-x-${i}`}
+          points={[[-20, -2.99, (i - 10) * 2], [20, -2.99, (i - 10) * 2]]}
+          color="#334155"
+          lineWidth={1}
+          transparent
+          opacity={0.3}
+        />
+      ))}
+      {Array.from({ length: 21 }, (_, i) => (
+        <Line
+          key={`grid-z-${i}`}
+          points={[[(i - 10) * 2, -2.99, -20], [(i - 10) * 2, -2.99, 20]]}
+          color="#334155"
+          lineWidth={1}
+          transparent
+          opacity={0.3}
+        />
+      ))}
     </>
   );
 };
@@ -273,6 +665,21 @@ const StorytellingTooltip: React.FC = () => {
       title: "Interest Evolution",
       description: "Modeling how user interests change over time",
       details: "Dynamic interest representation for better predictions"
+    },
+    {
+      title: "Final Prediction",
+      description: "DeepFM generates click probability prediction",
+      details: "91% confidence for recommended item"
+    },
+    {
+      title: "Final Prediction",
+      description: "DeepFM generates click probability prediction",
+      details: "91% confidence for recommended item"
+    },
+    {
+      title: "Final Prediction",
+      description: "DeepFM generates click probability prediction",
+      details: "91% confidence for recommended item"
     },
     {
       title: "Final Prediction",
@@ -322,75 +729,39 @@ const StorytellingTooltip: React.FC = () => {
   );
 };
 
-const ParticleField: React.FC = () => {
-  const particlesRef = useRef<THREE.Points>(null);
-  
-  useFrame((state) => {
-    if (particlesRef.current) {
-      particlesRef.current.rotation.y += 0.001;
-      particlesRef.current.rotation.x += 0.0005;
-    }
-  });
-
-  const particleCount = 100;
-  const positions = new Float32Array(particleCount * 3);
-  
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 30;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
-  }
-
-  return (
-    <points ref={particlesRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={positions}
-          count={particleCount}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        color="#6366f1"
-        size={0.02}
-        transparent
-        opacity={0.4}
-      />
-    </points>
-  );
-};
-
 const Scene: React.FC = () => {
   const { layers, highlightedLayer, currentStep, autoRotate } = useStore();
 
   return (
     <>
+      {/* (Lighting, particle‐background, etc…) */}
       <ambientLight intensity={0.3} />
       <pointLight position={[10, 10, 10]} intensity={1} color="#6366f1" />
       <pointLight position={[-10, -10, -10]} intensity={0.5} color="#8b5cf6" />
       <pointLight position={[0, 10, 0]} intensity={0.3} color="#ffffff" />
-      
-      <ParticleField />
-      
-      <NetworkConnections 
-        layers={layers} 
+
+      <ProfessionalEnvironment />
+
+      {/* 1) Draw all connection lines + particles */}
+      <ProfessionalConnections
+        layers={layers}
         currentStep={currentStep}
       />
-      
-      {layers.map((layer, index) => (
-        <NetworkBlock
+
+      {/* 2) Draw each block on top: */}
+      {layers.map((layer, idx) => (
+        <ProfessionalNetworkBlock
           key={layer.id}
           layer={layer}
           isHighlighted={highlightedLayer === layer.id}
-          isActive={currentStep > index}
+          isActive={currentStep > idx}
         />
       ))}
-      
-      <OrbitControls 
-        enablePan={true}
-        enableZoom={true}
-        enableRotate={true}
+
+      <OrbitControls
+        enablePan
+        enableZoom
+        enableRotate
         autoRotate={autoRotate}
         autoRotateSpeed={0.3}
         maxDistance={25}

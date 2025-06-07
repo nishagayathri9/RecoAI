@@ -1,5 +1,16 @@
 import { create } from 'zustand';
 
+export interface Layer {
+  id: string;
+  name: string;
+  type: string;
+  position: [number, number, number];
+  color: string;
+  connections: string[];
+  description: string;
+  dimensions: string;
+}
+
 export type InputSample = {
   id: number;
   name: string;
@@ -10,17 +21,19 @@ export type InputSample = {
 
 export type ViewMode = 'free' | 'guided';
 
+// We’ll define LayerInfo exactly as we use it below:
 export type LayerInfo = {
   id: string;
   name: string;
   type: string;
-  description: string;
+  description?: string;          // ← now optional
   position: [number, number, number];
   color: string;
-  size: number;
-  blockType: 'cube' | 'wide';
+  size?: number;                 // ← now optional
+  blockType?: 'cube' | 'wide';   // ← now optional
   connections: string[];
 };
+
 
 interface StoreState {
   selectedSample: InputSample | null;
@@ -32,8 +45,9 @@ interface StoreState {
   cameraPosition: { x: number; y: number; z: number };
   autoRotate: boolean;
   highlightedLayer: string | null;
-  layers: LayerInfo[];
   showSummary: boolean;
+  layers: LayerInfo[];
+
   // Actions
   selectSample: (sample: InputSample) => void;
   nextStep: () => void;
@@ -45,10 +59,123 @@ interface StoreState {
   setCameraPosition: (position: { x: number; y: number; z: number }) => void;
   toggleAutoRotate: () => void;
   highlightLayer: (layerId: string | null) => void;
-  setShowSummary: (show: boolean) => void;
+  toggleSummary: () => void;
+
 }
 
-// Sample inputs
+const networkLayers: LayerInfo[] = [
+   {
+    id: 'input',
+    name: 'Multi-field Input',
+    type: 'Raw Sparse Features (User/Item/Context + History)',
+    description: 'Raw sparse features including user ID, item ID, context ID, and click history',
+    position: [-12, 0, 0],
+    color: '#2563EB',
+    size: 1.5,
+    blockType: 'wide',
+    connections: ['embed_user', 'embed_item', 'embed_context'],
+  },
+  {
+    id: 'embed_user',
+    name: 'User Embedding',
+    type: 'Dense Embedding (64D)',
+    description: 'Convert user ID into a 64-dimensional dense vector',
+    position: [-8, 2, 0],
+    color: '#9333EA',
+    size: 1.0,
+    blockType: 'cube',
+    connections: ['dien_gru'],
+  },
+  {
+    id: 'embed_item',
+    name: 'Item Embedding',
+    type: 'Dense Embedding (64D)',
+    description: 'Convert item ID into a 64-dimensional dense vector',
+    position: [-8, 0, 0],
+    color: '#9333EA',
+    size: 1.0,
+    blockType: 'cube',
+    connections: ['dien_gru', 'deepfm_linear', 'deepfm_fm', 'deepfm_deep'],
+  },
+  {
+    id: 'embed_context',
+    name: 'Context Embedding',
+    type: 'Dense Embedding (32D)',
+    description: 'Convert context ID into a 32-dimensional dense vector',
+    position: [-8, -2, 0],
+    color: '#9333EA',
+    size: 1.0,
+    blockType: 'cube',
+    connections: ['deepfm_linear', 'deepfm_deep'],
+  },
+  {
+    id: 'dien_gru',
+    name: 'Interest Extractor\n(GRU)',
+    type: 'GRU Layer (128 hidden)',
+    description: 'Run history through a GRU to get hidden states',
+    position: [-1, 1, 0],
+    color: '#10B981',
+    size: 1.2,
+    blockType: 'wide',
+    connections: ['dien_augru'],
+  },
+  {
+    id: 'dien_augru',
+    name: 'Interest Evolution\n(AUGRU + Attention)',
+    type: 'AUGRU + Attention (64D)',
+    description: 'Apply attention over GRU hidden states to produce interest vector',
+    position: [3, 1, 0],
+    color: '#F59E0B',
+    size: 1.2,
+    blockType: 'wide',
+    connections: ['fusion_layer'],
+  },
+  {
+    id: 'deepfm_linear',
+    name: 'DeepFM: Linear',
+    type: 'Linear Layer',
+    description: 'First-order feature interactions (sum of wᵢ xᵢ)',
+    position: [-4, 4.5, -4], 
+    color: '#EF4444',
+    size: 1.0,
+    blockType: 'wide',
+    connections: ['fusion_layer'],
+  },
+  {
+    id: 'deepfm_deep',
+    name: 'DeepFM: Deep',
+    type: 'MLP Stack',
+    description: 'Higher-order interactions via MLP layers',
+    position: [-4, 1.5, 5],
+    color: '#84CC16',
+    size: 1.0,
+    blockType: 'wide',
+    connections: ['fusion_layer'],
+  },
+  {
+    id: 'fusion_layer',
+    name: 'Fusion Layer',
+    type: 'Concat + MLP',
+    description: 'Concatenate DIEN’s interest vector + DeepFM’s output, then pass through a small MLP',
+    position: [7, 0, 0],
+    color: '#6366F1',
+    size: 1.3,
+    blockType: 'cube',
+    connections: ['output'],
+  },
+  {
+    id: 'output',
+    name: 'Sigmoid Output\n(CTR ∈ [0,1])',
+    type: 'Final Probability',
+    description: 'Sigmoid(⋅) on final logit → click probability',
+    position: [11, 0, 0],
+    color: '#E11D48',
+    size: 1.2,
+    blockType: 'cube',
+    connections: [],
+  },
+];
+
 const sampleInputs: InputSample[] = [
   {
     id: 1,
@@ -56,7 +183,7 @@ const sampleInputs: InputSample[] = [
     description: "User interested in minimalist desks and office furniture",
     userBehavior: [
       "Viewed Minimalist Desks",
-      "Viewed Office Chairs", 
+      "Viewed Office Chairs",
       "Viewed Cable Management",
       "Added Ash Wood Desk to Cart"
     ],
@@ -73,7 +200,7 @@ const sampleInputs: InputSample[] = [
     userBehavior: [
       "Viewed Gaming Laptops",
       "Viewed Mechanical Keyboards",
-      "Viewed Ultrawide Monitors", 
+      "Viewed Ultrawide Monitors",
       "Added Gaming Headset to Cart"
     ],
     metadata: {
@@ -84,7 +211,7 @@ const sampleInputs: InputSample[] = [
   },
   {
     id: 3,
-    name: "Kitchen Renovator", 
+    name: "Kitchen Renovator",
     description: "User looking for kitchen appliances and fixtures",
     userBehavior: [
       "Viewed Kitchen Faucets",
@@ -94,161 +221,97 @@ const sampleInputs: InputSample[] = [
     ],
     metadata: {
       categories: ["Kitchen", "Appliances", "Smart Home"],
-      priceRange: "$$$", 
+      priceRange: "$$$",
       recentSearch: "modern kitchen design"
     }
   }
 ];
 
-// Neural network layers based on DIEN + DeepFM architecture with building block styling
-const layers: LayerInfo[] = [
-  {
-    id: 'input',
-    name: 'Input Layer',
-    type: 'Data Input',
-    description: 'Raw user behavior sequence and features',
-    position: [-8, 0, 0],
-    color: '#22d3ee',
-    size: 1.2,
-    blockType: 'cube',
-    connections: ['embedding']
-  },
-  {
-    id: 'embedding',
-    name: 'Embedding',
-    type: 'Feature Transform',
-    description: 'Convert sparse features to dense embeddings',
-    position: [-5, 0, 0],
-    color: '#3b82f6',
-    size: 1.0,
-    blockType: 'wide',
-    connections: ['behavior', 'gru']
-  },
-  {
-    id: 'behavior',
-    name: 'Behavior Layer',
-    type: 'Sequence Processing',
-    description: 'Process user behavior sequence',
-    position: [-2, -2, 0],
-    color: '#8b5cf6',
-    size: 0.8,
-    blockType: 'cube',
-    connections: ['gru']
-  },
-  {
-    id: 'gru',
-    name: 'GRU Layer',
-    type: 'Recurrent Unit',
-    description: 'Gated Recurrent Unit for sequence modeling',
-    position: [1, -1, 0],
-    color: '#a855f7',
-    size: 0.9,
-    blockType: 'wide',
-    connections: ['attention']
-  },
-  {
-    id: 'attention',
-    name: 'AUGRU',
-    type: 'Attention Mechanism',
-    description: 'Attention-based GRU with focus mechanism',
-    position: [4, 0, 0],
-    color: '#c084fc',
-    size: 1.1,
-    blockType: 'cube',
-    connections: ['interest_evolving']
-  },
-  {
-    id: 'interest_evolving',
-    name: 'Interest Evolution',
-    type: 'Dynamic Modeling',
-    description: 'Model evolving user interests over time',
-    position: [7, 1, 0],
-    color: '#f97316',
-    size: 1.0,
-    blockType: 'wide',
-    connections: ['deepfm']
-  },
-  {
-    id: 'deepfm',
-    name: 'DeepFM',
-    type: 'Factorization Machine',
-    description: 'Deep factorization machine for final processing',
-    position: [10, -1, 0], 
-    color: '#10b981',
-    size: 0.9,
-    blockType: 'cube',
-    connections: ['output']
-  },
-  {
-    id: 'output',
-    name: 'Prediction',
-    type: 'Output Layer',
-    description: 'Final click probability prediction',
-    position: [13, 0, 0],
-    color: '#ef4444',
-    size: 1.3,
-    blockType: 'cube',
-    connections: []
-  }
-];
+export const useStore = create<{
+  selectedSample: InputSample | null;
+  sampleInputs: InputSample[];
+  currentStep: number;
+  maxSteps: number;
+  isPlaying: boolean;
+  viewMode: ViewMode;
+  cameraPosition: { x: number; y: number; z: number };
+  autoRotate: boolean;
+  highlightedLayer: string | null;
+  layers: LayerInfo[];
+  showSummary: boolean;
 
-export const useStore = create<StoreState>((set) => ({
+  selectSample: (sample: InputSample) => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  setStep: (step: number) => void;
+  resetPlayground: () => void;
+  setPlaying: (flag: boolean) => void;
+  setViewMode: (mode: ViewMode) => void;
+  setCameraPosition: (pos: { x: number; y: number; z: number }) => void;
+  toggleAutoRotate: () => void;
+  highlightLayer: (layerId: string | null) => void;
+  toggleSummary: () => void;
+}>((set) => ({
   selectedSample: null,
-  sampleInputs,
+  sampleInputs,                        // your array
   currentStep: 0,
-  maxSteps: 6,
+  maxSteps: networkLayers.length,
   isPlaying: false,
   viewMode: 'free',
   cameraPosition: { x: 5, y: 2, z: 5 },
   autoRotate: false,
   highlightedLayer: null,
-  layers,
+  layers: networkLayers,
   showSummary: false,
 
-  selectSample: (sample) => set({ 
-    selectedSample: sample, 
-    currentStep: 1, 
-    isPlaying: false,
-    showSummary: false 
-  }),
-  
-  nextStep: () => set((state) => {
-    const nextStep = Math.min(state.currentStep + 1, state.maxSteps);
-    return {
-      currentStep: nextStep,
-      isPlaying: nextStep < state.maxSteps,
-      showSummary: nextStep === state.maxSteps
-    };
-  }),
-  
-  prevStep: () => set((state) => ({
-    currentStep: Math.max(state.currentStep - 1, 0),
-    isPlaying: false,
-    showSummary: false
-  })),
-  
-  setStep: (step) => set({
-    currentStep: step,
-    isPlaying: false,
-    showSummary: step === 6
-  }),
-  
-  resetPlayground: () => set({
-    selectedSample: null,
-    currentStep: 0,
-    isPlaying: false,
-    showSummary: false
-  }),
-  
+  selectSample: (sample) =>
+    set({
+      selectedSample: sample,
+      currentStep: 1,
+      isPlaying: false,
+      highlightedLayer: null,
+    }),
+
+  nextStep: () =>
+    set((state) => {
+      const next = Math.min(state.currentStep + 1, state.maxSteps);
+      return {
+        currentStep: next,
+        isPlaying: next < state.maxSteps,
+        showSummary: next === state.maxSteps  // ← set it exactly when you hit the last step
+      };
+    }),
+
+  prevStep: () =>
+    set((state) => ({
+      currentStep: Math.max(state.currentStep - 1, 0),
+      isPlaying: false,
+    })),
+
+  setStep: (step) =>
+    set({
+      currentStep: step,
+      isPlaying: false,
+    }),
+
+  resetPlayground: () =>
+    set({
+      selectedSample: null,
+      currentStep: 0,
+      isPlaying: false,
+    }),
+
   setPlaying: (playing) => set({ isPlaying: playing }),
-  
+
   setViewMode: (mode) => set({ viewMode: mode }),
-  
+
   setCameraPosition: (position) => set({ cameraPosition: position }),
-  
-  toggleAutoRotate: () => set((state) => ({ autoRotate: !state.autoRotate })),
-  
+
+  toggleAutoRotate: () =>
+    set((state) => ({ autoRotate: !state.autoRotate })),
+
   highlightLayer: (layerId) => set({ highlightedLayer: layerId }),
 
-  setShowSummary: (show) => set({ showSummary: show })
+  toggleSummary: () =>
+    set((state) => ({ showSummary: !state.showSummary })),
 }));
