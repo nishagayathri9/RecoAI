@@ -2,7 +2,6 @@ venv
 *.npy
 *.pth
 *.csv
-frontend/
 notebooks/
 playground/
 __pycache__/
