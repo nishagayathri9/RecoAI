@@ -12,6 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const openai = new OpenAI({
   // add api key
   apiKey: process.env.OPENAI_API_KEY
+
 });
 
 console.log(">>> DEBUG: Using hard-coded OPENAI_API_KEY in openaiClient.js");
