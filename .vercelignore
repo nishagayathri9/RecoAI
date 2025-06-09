@@ -1,0 +1,15 @@
+venv
+*.npy
+*.pth
+*.csv
+frontend/
+notebooks/
+playground/
+__pycache__/
+*.ipynb
+*.ipynb_checkpoints/
+*.log
+main.py
+model.py
+top_k.py
+requirements.txt
