@@ -7,6 +7,11 @@ interface ChatFabProps {
 }
 
 const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
+  // ─── Choose the right base URL ────────────────────────────
+  const API_BASE = import.meta.env.PROD
+    ? 'https://reco-ai-k1v7.vercel.app'  // your live API
+    : '/api';                             // dev proxy to localhost
+
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<1 | 2>(1);
   const [reasoning, setReasoning] = useState<string>('Loading...');
@@ -20,7 +25,7 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
       try {
         // 1) Fetch reasoning
         const reasoningResp = await fetch(
-          `/api/reasoning?userId=${encodeURIComponent(selectedUser)}`
+          `${API_BASE}/reasoning?userId=${encodeURIComponent(selectedUser)}`
         );
         if (!reasoningResp.ok) {
           throw new Error(`Reasoning fetch failed: ${reasoningResp.status}`);
@@ -30,7 +35,7 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
 
         // 2) Fetch key factors
         const keyFactorsResp = await fetch(
-          `/api/key-factors?userId=${encodeURIComponent(selectedUser)}`
+          `${API_BASE}/key-factors?userId=${encodeURIComponent(selectedUser)}`
         );
         if (!keyFactorsResp.ok) {
           throw new Error(`Key factors fetch failed: ${keyFactorsResp.status}`);
@@ -41,7 +46,7 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
         const factorsArray: string[] = (keyFactorsJson.keyFactors || '')
           .split('\n')
           .map((line: string) => line.replace(/^[-\s]*/, '').trim())
-          .filter((line: string | any[]) => line.length > 0);
+          .filter((line: string) => line.length > 0);
 
         setKeyFactors(
           factorsArray.length > 0 ? factorsArray : ['No key factors returned']
@@ -52,7 +57,7 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
         setKeyFactors(['Error loading key factors']);
       }
     })();
-  }, [open, selectedUser]);
+  }, [open, selectedUser, API_BASE]);
 
   return (
     <>
