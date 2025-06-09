@@ -26,16 +26,8 @@ async function loadAllUserData() {
   if (allUserData) return allUserData;
 
   // Build the absolute path to frontend/src/assets/data/users.json
-  const jsonPath = join(
-    __dirname,           // backend/server
-    "..",                // backend
-    "..",                // RecoAI (project root)
-    "frontend",
-    "src",
-    "assets",
-    "data",
-    "users.json"
-  );
+const jsonPath = join(__dirname, "api", "users.json");
+
 
   // Read and parse
   const fileText = await readFile(jsonPath, "utf-8");
