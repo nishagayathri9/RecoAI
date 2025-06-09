@@ -1,6 +1,17 @@
 import { generateInsightsForUser } from "../openaiClient.js";
 
 export default async function handler(req, res) {
+    // Allow any origin (or lock down to your front-end domain)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // If you need OPTIONS (preflight) too:
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    // Handle preflight
+    return res.status(204).end();
+  }
+  
   const { userId } = req.query;
 
   if (!userId) {
