@@ -11,8 +11,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Remove or switch to process.env.OPENAI_API_KEY when you’re ready.
 const openai = new OpenAI({
   // add api key
-  apiKey: "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"
-
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 console.log(">>> DEBUG: Using hard-coded OPENAI_API_KEY in openaiClient.js");

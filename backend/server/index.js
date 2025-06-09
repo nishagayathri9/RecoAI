@@ -1,7 +1,7 @@
 // backend/server/index.js
 import express from "express";
 import cors from "cors";
-import { generateInsightsForUser } from "./openaiClient.js";
+import { generateInsightsForUser } from "../openaiClient.js";
 import { readFile } from "fs/promises";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";

@@ -227,7 +227,6 @@ const UserDashboardPage: React.FC = () => {
             </div>
 
             {/* Recommendation Dashboard */}
-            {/* Recommendation Dashboard */}
             {showDashboard && datasetMetrics && (
               <motion.div
                 className="mt-8"

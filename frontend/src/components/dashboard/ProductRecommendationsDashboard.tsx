@@ -113,12 +113,29 @@ const ProductRecommendationsDashboard: React.FC<Props> = React.memo(({ data }) =
                   <p className="text-sm text-white/70 font-semibold mb-1">Recommendation Score</p>
                   <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden mb-1">
                     <div
-                      className="bg-primary h-2"
+                      className={`h-2 ${
+                        (product.score ?? 0) > 70
+                          ? 'bg-green-500'
+                          : (product.score ?? 0) > 50
+                          ? 'bg-yellow-500'
+                          : 'bg-red-500'
+                      }`}
                       style={{ width: `${product.score ?? 0}%` }}
                     />
                   </div>
-                  <p className="text-sm font-semibold text-primary">{product.score}%</p>
+                  <p
+                    className={`text-sm font-semibold ${
+                      (product.score ?? 0) > 70
+                        ? 'text-green-500'
+                        : (product.score ?? 0) > 50
+                        ? 'text-yellow-500'
+                        : 'text-red-500'
+                    }`}
+                  >
+                    {product.score}%
+                  </p>
                 </div>
+
               </div>
             ))}
           </section>
