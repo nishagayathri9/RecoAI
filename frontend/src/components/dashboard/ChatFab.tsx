@@ -9,12 +9,12 @@ interface ChatFabProps {
 const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
   // ─── Choose the right base URL ────────────────────────────
   const API_BASE = import.meta.env.PROD
-    ? 'https://reco-ai-k1v7.vercel.app'  // your live API
-    : '/api';                             // dev proxy to localhost
+    ? 'https://reco-ai-k1v7.vercel.app'
+    : '/api';
 
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<1 | 2>(1);
-  const [reasoning, setReasoning] = useState<string>('Loading...');
+  const [reasoning, setReasoning] = useState('Loading...');
   const [keyFactors, setKeyFactors] = useState<string[]>(['Loading...']);
 
   // ─── Fetch AI insights whenever panel opens or selectedUser changes ─────────────
@@ -25,7 +25,7 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
       try {
         // 1) Fetch reasoning
         const reasoningResp = await fetch(
-          `${API_BASE}/reasoning?userId=${encodeURIComponent(selectedUser)}`
+          `${API_BASE}/api/reasoning?userId=${encodeURIComponent(selectedUser)}`
         );
         if (!reasoningResp.ok) {
           throw new Error(`Reasoning fetch failed: ${reasoningResp.status}`);
@@ -35,7 +35,7 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
 
         // 2) Fetch key factors
         const keyFactorsResp = await fetch(
-          `${API_BASE}/key-factors?userId=${encodeURIComponent(selectedUser)}`
+          `${API_BASE}/api/key-factors?userId=${encodeURIComponent(selectedUser)}`
         );
         if (!keyFactorsResp.ok) {
           throw new Error(`Key factors fetch failed: ${keyFactorsResp.status}`);
