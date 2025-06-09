@@ -13,369 +13,136 @@ interface ProfessionalDataFlowProps {
   isActive:  boolean;
 }
 
-/**
- * Professional neural network layer representations based on the reference image
- */
 function getLayerGeometry(layer: any): [React.ReactNode, [number, number, number]] {
   const baseProps = { 
     castShadow: true,
     receiveShadow: true
   };
 
+  // A little swirling box for the fusion layer
   const SwirlElement: React.FC<{ index: number }> = ({ index }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      const time = state.clock.elapsedTime + index * Math.PI / 3;
-      const radius = 1.3;
-      meshRef.current.position.x = Math.cos(time * 2) * radius;
-      meshRef.current.position.z = Math.sin(time * 2) * radius;
-      meshRef.current.position.y = Math.sin(time * 3) * 0.5;
-    }
-  });
-
-  return (
-    <Box ref={meshRef} args={[0.1, 0.8, 0.1]} castShadow receiveShadow>
-      <meshStandardMaterial 
-        color="#ffffff" 
-        metalness={0.8} 
-        roughness={0.2}
-        emissive="#ffffff"
-        emissiveIntensity={0.3}
-        transparent
-        opacity={0.6}
-      />
-    </Box>
-  );
-};
+    const meshRef = useRef<THREE.Mesh>(null);
+    useFrame((state) => {
+      if (meshRef.current) {
+        const time = state.clock.elapsedTime + index * Math.PI / 3;
+        const radius = 1.3;
+        meshRef.current.position.set(
+          Math.cos(time * 2) * radius,
+          Math.sin(time * 3) * 0.5,
+          Math.sin(time * 2) * radius
+        );
+      }
+    });
+    return (
+      <Box ref={meshRef} args={[0.1, 0.8, 0.1]} {...baseProps}>
+        <meshStandardMaterial 
+          color="#ffffff" 
+          metalness={0.8} 
+          roughness={0.2}
+          emissive="#ffffff"
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.6}
+        />
+      </Box>
+    );
+  };
 
   switch (layer.id) {
-    case 'input':
-      // Large input feature matrix - like the leftmost layer in the image
+    // … your other cases up above …
+
+    case 'fusion_layer': {
+      const sphereRef = useRef<THREE.Mesh>(null);
+      const groupRef = useRef<THREE.Group>(null);
+      useFrame((state) => {
+        if (sphereRef.current) {
+          const pulse = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+          sphereRef.current.scale.setScalar(pulse);
+        }
+        if (groupRef.current) {
+          groupRef.current.rotation.y += 0.02;
+        }
+      });
+
       return [
-        <group key="input-group">
-          <Box args={[0.3, 4, 3]} {...baseProps}>
-            <meshStandardMaterial 
-              color="#4f46e5" 
-              metalness={0.1} 
-              roughness={0.8}
-              transparent
-              opacity={0.9}
-            />
-          </Box>
-          {/* Grid pattern to show feature matrix */}
-          {Array.from({ length: 12 }, (_, i) => (
-            <Box 
-              key={i}
-              args={[0.32, 0.25, 0.2]} 
-              position={[0, (i - 5.5) * 0.3, (i % 3 - 1) * 0.8]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color="#6366f1" 
-                metalness={0.2} 
-                roughness={0.6}
-                transparent
-                opacity={0.7}
-              />
-            </Box>
-          ))}
-        </group>,
-        [0.3, 4, 3]
-      ];
-      
-    case 'embedding_user':
-    case 'embedding_item': 
-    case 'embedding_context':
-      // Dense embedding blocks - smaller, more compact
-      return [
-        <group key={`${layer.id}-group`}>
-          <Box args={[0.8, 2.5, 1.5]} {...baseProps}>
-            <meshStandardMaterial 
+        <group key="fusion-group">
+          <Sphere ref={sphereRef} args={[1]} {...baseProps}>
+            <meshStandardMaterial
               color={layer.color}
-              metalness={0.3}
-              roughness={0.4}
+              metalness={0.7}
+              roughness={0.1}
+              emissive={layer.color}
+              emissiveIntensity={0.2}
               transparent
               opacity={0.85}
             />
-          </Box>
-          {/* Internal structure showing embedding dimensions */}
-          {Array.from({ length: 8 }, (_, i) => (
-            <Box 
-              key={i}
-              args={[0.82, 0.25, 0.1]} 
-              position={[0, (i - 3.5) * 0.3, 0.6]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color="#ffffff" 
-                metalness={0.8} 
-                roughness={0.2}
-                transparent
-                opacity={0.6}
-              />
-            </Box>
-          ))}
+          </Sphere>
+          <group ref={groupRef}>
+            {Array.from({ length: 6 }, (_, i) => (
+              <SwirlElement key={i} index={i} />
+            ))}
+          </group>
         </group>,
-        [0.8, 2.5, 1.5]
+        [2, 2, 2]
       ];
-      
-    case 'dien_extractor':
-      // GRU layers - stacked recurrent blocks
-      return [
-        <group key="gru-group">
-          {[0, 0.6, 1.2].map((y, i) => (
-            <Box 
-              key={i}
-              args={[1.2, 0.4, 2]} 
-              position={[0, y - 0.6, 0]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color={layer.color}
-                metalness={0.4}
-                roughness={0.3}
-                transparent
-                opacity={0.8}
-              />
-            </Box>
-          ))}
-          {/* GRU gates representation */}
-          {Array.from({ length: 6 }, (_, i) => (
-            <Sphere 
-              key={i}
-              args={[0.08]} 
-              position={[
-                (i % 3 - 1) * 0.4,
-                Math.floor(i / 3) * 0.6 - 0.3,
-                0.8
-              ]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color="#fbbf24" 
-                metalness={0.9} 
-                roughness={0.1}
-                emissive="#fbbf24"
-                emissiveIntensity={0.3}
-              />
-            </Sphere>
-          ))}
-        </group>,
-        [1.2, 1.2, 2]
-      ];
-      
-    case 'dien_evolution':
-      // AUGRU with attention - more complex structure
-      return [
-        <group key="augru-group">
-          <Box args={[1.5, 1, 2.2]} {...baseProps}>
-            <meshStandardMaterial 
-              color={layer.color}
-              metalness={0.5}
-              roughness={0.2}
-              transparent
-              opacity={0.8}
-            />
-          </Box>
-          {/* Attention mechanism visualization */}
-          {Array.from({ length: 8 }, (_, i) => (
-            <Box 
-              key={i}
-              args={[0.05, 0.8, 0.05]}
-              position={[
-                (i % 4 - 1.5) * 0.3,
-                0,
-                Math.floor(i / 4) * 0.8 - 0.4
-              ]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color="#f59e0b" 
-                metalness={0.8} 
-                roughness={0.1}
-                emissive="#f59e0b"
-                emissiveIntensity={0.4}
-              />
-            </Box>
-          ))}
-        </group>,
-        [1.5, 1, 2.2]
-      ];
-      
-    case 'deepfm_linear':
-      // Linear component - simple flat layer
-      return [
-        <Box args={[2, 0.3, 1.8]} {...baseProps}>
-          <meshStandardMaterial 
-            color={layer.color}
-            metalness={0.6}
-            roughness={0.2}
-            transparent
-            opacity={0.85}
-          />
-        </Box>,
-        [2, 0.3, 1.8]
-      ];
-      
-    case 'deepfm_fm':
-      // Factorization Machine - cross-interaction representation
-      return [
-        <group key="fm-group">
-          <Box args={[1.8, 0.8, 1.6]} {...baseProps}>
-            <meshStandardMaterial 
-              color={layer.color}
-              metalness={0.4}
-              roughness={0.3}
-              transparent
-              opacity={0.8}
-            />
-          </Box>
-          {/* Cross connections showing factorization */}
-          {Array.from({ length: 12 }, (_, i) => (
-            <Box 
-              key={i}
-              args={[0.02, 0.6, 0.02]}
-              position={[
-                Math.cos(i * Math.PI / 6) * 0.7,
-                0,
-                Math.sin(i * Math.PI / 6) * 0.6
-              ]}
-              rotation={[0, i * Math.PI / 6, 0]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color="#ffffff" 
-                metalness={0.9} 
-                roughness={0.1}
-                emissive="#ffffff"
-                emissiveIntensity={0.3}
-              />
-            </Box>
-          ))}
-        </group>,
-        [1.8, 0.8, 1.6]
-      ];
-      
-    case 'deepfm_deep':
-      // Deep MLP stack - like the conv layers in the image
-      return [
-        <group key="deep-group">
-          {[0, 0.5, 1.0].map((y, i) => (
-            <Box 
-              key={i}
-              args={[1.6 - i * 0.2, 0.4, 1.4 - i * 0.2]} 
-              position={[0, y - 0.5, 0]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color={layer.color}
-                metalness={0.3 + i * 0.1}
-                roughness={0.4 - i * 0.05}
-                transparent
-                opacity={0.8}
-              />
-            </Box>
-          ))}
-          {/* Neural connections between layers */}
-          {Array.from({ length: 15 }, (_, i) => (
-            <Cylinder 
-              key={i}
-              args={[0.02, 0.02, 0.4]}
-              position={[
-                (i % 5 - 2) * 0.25,
-                0.25,
-                (Math.floor(i / 5) - 1) * 0.25
-              ]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color="#64748b" 
-                metalness={0.7} 
-                roughness={0.3}
-                transparent
-                opacity={0.6}
-              />
-            </Cylinder>
-          ))}
-        </group>,
-        [1.6, 1, 1.4]
-      ];
-      
-case 'fusion_layer': {
-  // Fusion layer – sphere with swirling elements
-  const sphereRef = useRef<THREE.Mesh>(null);
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame((state) => {
-    if (sphereRef.current) {
-      const pulse = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
-      sphereRef.current.scale.setScalar(pulse);
     }
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.02;
-    }
-  });
 
-  return [
-    <group key="fusion-group">
-      <Sphere ref={sphereRef} args={[1.0]} castShadow receiveShadow>
-        <meshStandardMaterial
-          color={layer.color}
-          metalness={0.7}
-          roughness={0.1}
-          transparent
-          opacity={0.85}
-          emissive={layer.color}
-          emissiveIntensity={0.2}
-        />
-      </Sphere>
+    case 'output': {
+      const AnimatedPredictionNode: React.FC<{ index: number; color: string }> = ({ index, color }) => {
+        // Tell TS that this Mesh uses MeshStandardMaterial
+        const meshRef = useRef<
+          THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null
+        >(null);
 
-      <group ref={groupRef}>
-        {Array.from({ length: 6 }, (_, i) => (
-          <SwirlElement key={i} index={i} />
-        ))}
-      </group>
-    </group>,
-    // adjust collision/spacing bounds
-    [2.0, 2.0, 2.0]
-  ];
-}
+        useFrame((state) => {
+          const mesh = meshRef.current;
+          if (!mesh) return;
 
-    case 'output':
-      // Final prediction layer - like the rightmost spheres in the image
+          const time  = state.clock.elapsedTime + index * 0.2;
+          const pulse = 1 + Math.sin(time * 3) * 0.2;
+          mesh.scale.setScalar(pulse);
+
+          // Now TS knows `mesh.material` is a MeshStandardMaterial
+          mesh.material.emissiveIntensity = 0.2 + Math.sin(time * 2) * 0.3;
+        });
+        return (
+          <Sphere
+            ref={meshRef}
+            args={[0.18]}
+            position={[0, (index - 4.5) * 0.35, 0]}
+            {...baseProps}
+          >
+            <meshStandardMaterial
+              color={color}
+              metalness={0.8}
+              roughness={0.1}
+              emissive={color}
+              emissiveIntensity={0.2}
+              transparent
+              opacity={0.9}
+            />
+          </Sphere>
+        );
+      };
+
       return [
         <group key="output-group">
+          {/* 10 animated spheres */}
           {Array.from({ length: 10 }, (_, i) => (
-            <Sphere 
-              key={i}
-              args={[0.15]} 
-              position={[0, (i - 4.5) * 0.3, 0]}
-              {...baseProps}
-            >
-              <meshStandardMaterial 
-                color={layer.color}
-                metalness={0.8}
-                roughness={0.1}
-                emissive={layer.color}
-                emissiveIntensity={0.3}
-                transparent
-                opacity={0.9}
-              />
-            </Sphere>
+            <AnimatedPredictionNode key={i} index={i} color={layer.color} />
           ))}
+
           {/* Output labels */}
           {Array.from({ length: 10 }, (_, i) => (
-            <Box 
+            <Box
               key={`label-${i}`}
               args={[0.3, 0.15, 0.05]}
               position={[0.4, (i - 4.5) * 0.3, 0]}
               {...baseProps}
             >
-              <meshStandardMaterial 
-                color="#64748b" 
-                metalness={0.5} 
+              <meshStandardMaterial
+                color="#64748b"
+                metalness={0.5}
                 roughness={0.4}
                 transparent
                 opacity={0.7}
@@ -385,11 +152,13 @@ case 'fusion_layer': {
         </group>,
         [0.7, 3, 0.3]
       ];
-      
+    }
+
     default:
+      // Fallback simple cube if you ever hit an unknown layer
       return [
-        <Box args={[1, 1, 1]} {...baseProps}>
-          <meshStandardMaterial color={layer.color} />
+        <Box key="default-box" args={[1, 1, 1]} {...baseProps}>
+          <meshStandardMaterial color={layer.color || '#888'} />
         </Box>,
         [1, 1, 1]
       ];
