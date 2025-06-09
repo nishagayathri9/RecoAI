@@ -28,7 +28,8 @@ const PlaygroundPage: React.FC = () => {
   layers, 
   nextStep, 
   highlightLayer,
-  setPlaying 
+  setPlaying,
+  maxSteps
   } = useStore();
 
 
@@ -39,7 +40,7 @@ const PlaygroundPage: React.FC = () => {
     if (isPlaying && selectedSample) {
       interval = setInterval(() => {
         nextStep();
-      }, 2500);
+      }, 7000);
     }
 
     return () => {
@@ -64,10 +65,10 @@ const PlaygroundPage: React.FC = () => {
 
   // Stop playing when reaching max steps
   useEffect(() => {
-    if (currentStep >= 7) {
+    if (currentStep >= maxSteps) {
       setPlaying(false);
     }
-  }, [currentStep, setPlaying]);
+  }, [currentStep, maxSteps, setPlaying]);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const ref3dView = useRef<HTMLDivElement>(null);

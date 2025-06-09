@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Text, Line, Box, Cylinder, Sphere } from '@react-three/drei';
 import { LayerInfo, useStore } from '../../store/index';
 import FlowParticles from './FlowParticles'; 
+import { stepDescriptions } from '../../store/steps';
 
 import * as THREE from 'three';
 
@@ -14,7 +15,7 @@ interface ProfessionalDataFlowProps {
 }
 
 function getLayerGeometry(layer: any): [React.ReactNode, [number, number, number]] {
-  const baseProps = { 
+  const baseProps = {
     castShadow: true,
     receiveShadow: true
   };
@@ -35,9 +36,9 @@ function getLayerGeometry(layer: any): [React.ReactNode, [number, number, number
     });
     return (
       <Box ref={meshRef} args={[0.1, 0.8, 0.1]} {...baseProps}>
-        <meshStandardMaterial 
-          color="#ffffff" 
-          metalness={0.8} 
+        <meshStandardMaterial
+          color="#ffffff"
+          metalness={0.8}
           roughness={0.2}
           emissive="#ffffff"
           emissiveIntensity={0.3}
@@ -49,7 +50,213 @@ function getLayerGeometry(layer: any): [React.ReactNode, [number, number, number
   };
 
   switch (layer.id) {
-    // … your other cases up above …
+    case 'input': {
+      return [
+        <group key="input-group">
+          <Box args={[0.3, 4, 3]} {...baseProps}>
+            <meshStandardMaterial
+              color="#4f46e5"
+              metalness={0.1}
+              roughness={0.8}
+              transparent
+              opacity={0.9}
+            />
+          </Box>
+          {Array.from({ length: 12 }, (_, i) => (
+            <Box
+              key={i}
+              args={[0.32, 0.25, 0.2]}
+              position={[0, (i - 5.5) * 0.3, (i % 3 - 1) * 0.8]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color="#6366f1"
+                metalness={0.2}
+                roughness={0.6}
+                transparent
+                opacity={0.7}
+              />
+            </Box>
+          ))}
+        </group>,
+        [0.3, 4, 3]
+      ];
+    }
+
+    case 'embedding_user':
+    case 'embedding_item':
+    case 'embedding_context': {
+      return [
+        <group key={`${layer.id}-group`}>
+          <Box args={[0.8, 2.5, 1.5]} {...baseProps}>
+            <meshStandardMaterial
+              color={layer.color}
+              metalness={0.3}
+              roughness={0.4}
+              transparent
+              opacity={0.85}
+            />
+          </Box>
+          {Array.from({ length: 8 }, (_, i) => (
+            <Box
+              key={i}
+              args={[0.82, 0.25, 0.1]}
+              position={[0, (i - 3.5) * 0.3, 0.6]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color="#ffffff"
+                metalness={0.8}
+                roughness={0.2}
+                transparent
+                opacity={0.6}
+              />
+            </Box>
+          ))}
+        </group>,
+        [0.8, 2.5, 1.5]
+      ];
+    }
+
+    case 'dien_extractor': {
+      return [
+        <group key="gru-group">
+          {[0, 0.6, 1.2].map((y, i) => (
+            <Box
+              key={i}
+              args={[1.2, 0.4, 2]}
+              position={[0, y - 0.6, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color={layer.color}
+                metalness={0.4}
+                roughness={0.3}
+                transparent
+                opacity={0.8}
+              />
+            </Box>
+          ))}
+          {Array.from({ length: 6 }, (_, i) => (
+            <Sphere
+              key={i}
+              args={[0.08]}
+              position={[
+                (i % 3 - 1) * 0.4,
+                Math.floor(i / 3) * 0.6 - 0.3,
+                0.8
+              ]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color="#fbbf24"
+                metalness={0.9}
+                roughness={0.1}
+                emissive="#fbbf24"
+                emissiveIntensity={0.3}
+              />
+            </Sphere>
+          ))}
+        </group>,
+        [1.2, 1.2, 2]
+      ];
+    }
+
+    case 'dien_evolution': {
+      return [
+        <group key="augru-group">
+          <Box args={[1.5, 1, 2.2]} {...baseProps}>
+            <meshStandardMaterial
+              color={layer.color}
+              metalness={0.5}
+              roughness={0.2}
+              transparent
+              opacity={0.8}
+            />
+          </Box>
+          {Array.from({ length: 8 }, (_, i) => (
+            <Box
+              key={i}
+              args={[0.05, 0.8, 0.05]}
+              position={[
+                (i % 4 - 1.5) * 0.3,
+                0,
+                Math.floor(i / 4) * 0.8 - 0.4
+              ]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color="#f59e0b"
+                metalness={0.8}
+                roughness={0.1}
+                emissive="#f59e0b"
+                emissiveIntensity={0.4}
+              />
+            </Box>
+          ))}
+        </group>,
+        [1.5, 1, 2.2]
+      ];
+    }
+
+    case 'deepfm_linear': {
+      return [
+        <Box args={[2, 0.3, 1.8]} {...baseProps}>
+          <meshStandardMaterial
+            color={layer.color}
+            metalness={0.6}
+            roughness={0.2}
+            transparent
+            opacity={0.85}
+          />
+        </Box>,
+        [2, 0.3, 1.8]
+      ];
+    }
+
+    case 'deepfm_deep': {
+      return [
+        <group key="deep-group">
+          {[0, 0.5, 1.0].map((y, i) => (
+            <Box
+              key={i}
+              args={[1.6 - i * 0.2, 0.4, 1.4 - i * 0.2]}
+              position={[0, y - 0.5, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color={layer.color}
+                metalness={0.3 + i * 0.1}
+                roughness={0.4 - i * 0.05}
+                transparent
+                opacity={0.8}
+              />
+            </Box>
+          ))}
+          {Array.from({ length: 15 }, (_, i) => (
+            <Cylinder
+              key={i}
+              args={[0.02, 0.02, 0.4]}
+              position={[
+                (i % 5 - 2) * 0.25,
+                0.25,
+                (Math.floor(i / 5) - 1) * 0.25
+              ]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color="#64748b"
+                metalness={0.7}
+                roughness={0.3}
+                transparent
+                opacity={0.6}
+              />
+            </Cylinder>
+          ))}
+        </group>,
+        [1.6, 1, 1.4]
+      ];
+    }
 
     case 'fusion_layer': {
       const sphereRef = useRef<THREE.Mesh>(null);
@@ -88,51 +295,45 @@ function getLayerGeometry(layer: any): [React.ReactNode, [number, number, number
     }
 
     case 'output': {
-      const AnimatedPredictionNode: React.FC<{ index: number; color: string }> = ({ index, color }) => {
-        // Tell TS that this Mesh uses MeshStandardMaterial
-        const meshRef = useRef<
-          THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null
-        >(null);
+      const AnimatedPredictionNode: React.FC<{ index: number; color: string }> =
+        ({ index, color }) => {
+          const meshRef = useRef<
+            THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial> | null
+          >(null);
 
-        useFrame((state) => {
-          const mesh = meshRef.current;
-          if (!mesh) return;
+          useFrame((state) => {
+            const mesh = meshRef.current;
+            if (!mesh) return;
+            const time = state.clock.elapsedTime + index * 0.2;
+            mesh.scale.setScalar(1 + Math.sin(time * 3) * 0.2);
+            mesh.material.emissiveIntensity = 0.2 + Math.sin(time * 2) * 0.3;
+          });
 
-          const time  = state.clock.elapsedTime + index * 0.2;
-          const pulse = 1 + Math.sin(time * 3) * 0.2;
-          mesh.scale.setScalar(pulse);
-
-          // Now TS knows `mesh.material` is a MeshStandardMaterial
-          mesh.material.emissiveIntensity = 0.2 + Math.sin(time * 2) * 0.3;
-        });
-        return (
-          <Sphere
-            ref={meshRef}
-            args={[0.18]}
-            position={[0, (index - 4.5) * 0.35, 0]}
-            {...baseProps}
-          >
-            <meshStandardMaterial
-              color={color}
-              metalness={0.8}
-              roughness={0.1}
-              emissive={color}
-              emissiveIntensity={0.2}
-              transparent
-              opacity={0.9}
-            />
-          </Sphere>
-        );
-      };
+          return (
+            <Sphere
+              ref={meshRef}
+              args={[0.18]}
+              position={[0, (index - 4.5) * 0.35, 0]}
+              {...baseProps}
+            >
+              <meshStandardMaterial
+                color={color}
+                metalness={0.8}
+                roughness={0.1}
+                emissive={color}
+                emissiveIntensity={0.2}
+                transparent
+                opacity={0.9}
+              />
+            </Sphere>
+          );
+        };
 
       return [
         <group key="output-group">
-          {/* 10 animated spheres */}
           {Array.from({ length: 10 }, (_, i) => (
             <AnimatedPredictionNode key={i} index={i} color={layer.color} />
           ))}
-
-          {/* Output labels */}
           {Array.from({ length: 10 }, (_, i) => (
             <Box
               key={`label-${i}`}
@@ -154,14 +355,14 @@ function getLayerGeometry(layer: any): [React.ReactNode, [number, number, number
       ];
     }
 
-    default:
-      // Fallback simple cube if you ever hit an unknown layer
+    default: {
       return [
         <Box key="default-box" args={[1, 1, 1]} {...baseProps}>
           <meshStandardMaterial color={layer.color || '#888'} />
         </Box>,
         [1, 1, 1]
       ];
+    }
   }
 }
 
@@ -403,66 +604,13 @@ const ProfessionalEnvironment: React.FC = () => {
 const StorytellingTooltip: React.FC = () => {
   const { selectedSample, currentStep } = useStore();
   const [isVisible, setIsVisible] = useState(false);
-
-  const stepDescriptions = [
-    {
-      title: "Ready to Begin",
-      description: "Select a sample input to start the neural network journey",
-      details: ""
-    },
-    {
-      title: "Input Processing",
-      description: "Raw user behavior data enters the network",
-      details: selectedSample ? `Processing: ${selectedSample.name}` : ""
-    },
-    {
-      title: "Embedding Transformation",
-      description: "Sparse features converted to dense vector representations",
-      details: "Categories and items mapped to latent space"
-    },
-    {
-      title: "Behavior Sequence Analysis",
-      description: "Processing temporal patterns in user behavior",
-      details: "Sequential dependencies captured through GRU layers"
-    },
-    {
-      title: "Attention Mechanism",
-      description: "AUGRU focuses on relevant behavioral patterns",
-      details: "Attention weights highlight important interactions"
-    },
-    {
-      title: "Interest Evolution",
-      description: "Modeling how user interests change over time",
-      details: "Dynamic interest representation for better predictions"
-    },
-    {
-      title: "Final Prediction",
-      description: "DeepFM generates click probability prediction",
-      details: "91% confidence for recommended item"
-    },
-    {
-      title: "Final Prediction",
-      description: "DeepFM generates click probability prediction",
-      details: "91% confidence for recommended item"
-    },
-    {
-      title: "Final Prediction",
-      description: "DeepFM generates click probability prediction",
-      details: "91% confidence for recommended item"
-    },
-    {
-      title: "Final Prediction",
-      description: "DeepFM generates click probability prediction",
-      details: "91% confidence for recommended item"
-    }
-  ];
-
   const currentStepInfo = stepDescriptions[currentStep] || stepDescriptions[0];
+  const totalSteps      = stepDescriptions.length - 1;
 
   useEffect(() => {
     if (selectedSample && currentStep > 0) {
       setIsVisible(true);
-      const timer = setTimeout(() => setIsVisible(false), 4000);
+      const timer = setTimeout(() => setIsVisible(false), 7000);
       return () => clearTimeout(timer);
     }
   }, [currentStep, selectedSample]);
@@ -485,11 +633,16 @@ const StorytellingTooltip: React.FC = () => {
           <p className="text-white/60 text-xs">{currentStepInfo.details}</p>
         )}
         <div className="mt-3 flex justify-between items-center">
-          <span className="text-xs text-white/50">Step {currentStep} of 6</span>
+          {/* Use totalSteps if you want “0…N” or humanSteps for “1…N” */}
+          <span className="text-xs text-white/50">
+            Step {currentStep} of {totalSteps}
+          </span>
+
           <div className="w-16 h-1 bg-background/50 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-300"
-              style={{ width: `${(currentStep / 6) * 100}%` }}
+              // now divide by totalSteps instead of 6
+              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             />
           </div>
         </div>

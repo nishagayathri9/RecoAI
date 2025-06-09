@@ -27,7 +27,6 @@ export const StepControls: React.FC = () => {
     setViewMode
   } = useStore();
 
-  // If no sample is selected, render nothing
   if (!selectedSample) return null;
 
   // Derive progress percentage
@@ -65,7 +64,6 @@ export const StepControls: React.FC = () => {
             </div>
             <h3 className="text-lg font-semibold text-white">Control Panel</h3>
           </div>
-
           <button
             onClick={resetPlayground}
             className="p-2 rounded-lg bg-background/50 hover:bg-background transition-colors border border-white/10"

@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { stepDescriptions } from './steps';
+
 
 export interface Layer {
   id: string;
@@ -34,7 +36,6 @@ export type LayerInfo = {
   connections: string[];
 };
 
-
 interface StoreState {
   selectedSample: InputSample | null;
   sampleInputs: InputSample[];
@@ -64,12 +65,12 @@ interface StoreState {
 }
 
 const networkLayers: LayerInfo[] = [
-   {
+  {
     id: 'input',
     name: 'Multi-field Input',
     type: 'Raw Sparse Features (User/Item/Context + History)',
     description: 'Raw sparse features including user ID, item ID, context ID, and click history',
-    position: [-12, 0, 0],
+    position: [-13, 0, 0],
     color: '#2563EB',
     size: 1.5,
     blockType: 'wide',
@@ -80,7 +81,7 @@ const networkLayers: LayerInfo[] = [
     name: 'User Embedding',
     type: 'Dense Embedding (64D)',
     description: 'Convert user ID into a 64-dimensional dense vector',
-    position: [-8, 2, 0],
+    position: [-8, 6, 0],
     color: '#9333EA',
     size: 1.0,
     blockType: 'cube',
@@ -91,7 +92,7 @@ const networkLayers: LayerInfo[] = [
     name: 'Item Embedding',
     type: 'Dense Embedding (64D)',
     description: 'Convert item ID into a 64-dimensional dense vector',
-    position: [-8, 0, 0],
+    position: [-8, 2, 0],
     color: '#9333EA',
     size: 1.0,
     blockType: 'cube',
@@ -99,7 +100,7 @@ const networkLayers: LayerInfo[] = [
   },
   {
     id: 'embed_context',
-    name: 'Context Embedding',
+    name: 'User Click History',
     type: 'Dense Embedding (32D)',
     description: 'Convert context ID into a 32-dimensional dense vector',
     position: [-8, -2, 0],
@@ -107,6 +108,17 @@ const networkLayers: LayerInfo[] = [
     size: 1.0,
     blockType: 'cube',
     connections: ['deepfm_linear'],
+  },
+  {
+    id: 'deepfm_linear',
+    name: 'DeepFM: Linear',
+    type: 'Linear Layer',
+    description: 'First-order feature interactions (sum of wᵢ xᵢ)',
+    position: [-4, 4, -4],
+    color: '#EF4444',
+    size: 1.0,
+    blockType: 'wide',
+    connections: ['dien_gru'],
   },
   {
     id: 'dien_gru',
@@ -121,7 +133,7 @@ const networkLayers: LayerInfo[] = [
   },
   {
     id: 'dien_augru',
-    name: 'Interest Evolution\n(AUGRU + Attention)',
+    name: 'Interest Evolution\n(Attention + AUGRU)',
     type: 'AUGRU + Attention (64D)',
     description: 'Apply attention over GRU hidden states to produce interest vector',
     position: [3, 1, 0],
@@ -131,22 +143,11 @@ const networkLayers: LayerInfo[] = [
     connections: ['fusion_layer'],
   },
   {
-    id: 'deepfm_linear',
-    name: 'DeepFM: Linear',
-    type: 'Linear Layer',
-    description: 'First-order feature interactions (sum of wᵢ xᵢ)',
-    position: [-4, 4.5, -4], 
-    color: '#EF4444',
-    size: 1.0,
-    blockType: 'wide',
-    connections: ['dien_gru'],
-  },
-  {
     id: 'deepfm_deep',
     name: 'DeepFM: Deep',
     type: 'MLP Stack',
     description: 'Higher-order interactions via MLP layers',
-    position: [-4, 1.5, 5],
+    position: [-4, 0, 5],
     color: '#84CC16',
     size: 1.0,
     blockType: 'wide',
@@ -165,7 +166,7 @@ const networkLayers: LayerInfo[] = [
   },
   {
     id: 'output',
-    name: 'Sigmoid Output\n(CTR ∈ [0,1])',
+    name: 'Output\n(CTR ∈ [0,1])',
     type: 'Final Probability',
     description: 'Sigmoid(⋅) on final logit → click probability',
     position: [11, 0, 0],
@@ -175,6 +176,7 @@ const networkLayers: LayerInfo[] = [
     connections: [],
   },
 ];
+
 
 const sampleInputs: InputSample[] = [
   {
@@ -255,7 +257,7 @@ export const useStore = create<{
   selectedSample: null,
   sampleInputs,                        // your array
   currentStep: 0,
-  maxSteps: networkLayers.length,
+  maxSteps: stepDescriptions.length - 1,
   isPlaying: false,
   viewMode: 'free',
   cameraPosition: { x: 5, y: 2, z: 5 },
