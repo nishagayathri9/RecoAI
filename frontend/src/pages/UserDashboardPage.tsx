@@ -28,6 +28,11 @@ type DatasetMetrics = {
 
 // --- Main Dashboard Page ---
 const UserDashboardPage: React.FC = () => {
+  const [selectedUser, setSelectedUser] = useState<string>(
+    Object.keys(simRecData)[0]
+  );
+
+
   const [showDashboard, setShowDashboard] = useState(false);
   const [uploadDetails, setUploadDetails] = useState<string | null>(null);
   const [uploadFeatures, setUploadFeatures] = useState<string[]>([]);
@@ -318,14 +323,18 @@ const UserDashboardPage: React.FC = () => {
             )}
 
             {/* --- Product Recommendations Section --- */}
-            {showDashboard && recommendationsData && (
+            {showDashboard && recommendationsData && datasetMetrics &&(
               <motion.div
                 className="mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <ProductRecommendationsDashboard data={recommendationsData} />
+              <ProductRecommendationsDashboard
+                data={recommendationsData}
+                selectedUser={selectedUser}
+                onUserChange={setSelectedUser}
+                />
               </motion.div>
             )}
           </div>
@@ -437,7 +446,7 @@ const UserDashboardPage: React.FC = () => {
       </section>
 
       {/* Chat Floating Action Button */}
-      <ChatFab />
+      <ChatFab selectedUser={selectedUser} />
     </div>
   );
 };

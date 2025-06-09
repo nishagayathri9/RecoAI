@@ -7,9 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        target: 'https://reco-ai-k1v7.vercel.app',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api'),
+        secure: true,
+        rewrite: path => path.replace(/^\/api/, '/api'),
       },
     },
   },
