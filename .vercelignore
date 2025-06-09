@@ -3,7 +3,6 @@ venv
 *.pth
 *.csv
 notebooks/
-playground/
 __pycache__/
 *.ipynb
 *.ipynb_checkpoints/
