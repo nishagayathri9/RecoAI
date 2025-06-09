@@ -4,7 +4,8 @@ import { fileURLToPath } from "url";
 
 export default async function handler(req, res) {
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  const jsonPath = join(__dirname, "../../frontend/src/assets/data/users.json");
+  const jsonPath = join(__dirname, "../data/users.json");
+
 
   try {
     const fileText = await readFile(jsonPath, "utf-8");
