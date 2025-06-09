@@ -4,9 +4,10 @@ import { Brain, X, Lightbulb, TrendingUp } from 'lucide-react';
 
 interface ChatFabProps {
   selectedUser: string;
+  hasData: boolean;
 }
 
-const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
+const ChatFab: React.FC<ChatFabProps> = ({ selectedUser, hasData }) => {
   // ─── Choose the right base URL ────────────────────────────
   const API_BASE = import.meta.env.PROD
     ? 'https://reco-ai-k1v7.vercel.app'
@@ -17,9 +18,10 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
   const [reasoning, setReasoning] = useState('Loading...');
   const [keyFactors, setKeyFactors] = useState<string[]>(['Loading...']);
 
-  // ─── Fetch AI insights whenever panel opens or selectedUser changes ─────────────
-  useEffect(() => {
-    if (!open) return;
+
+   useEffect(() => {
+    // don’t do anything until panel is open *and* we actually have data
+    if (!open || !hasData) return;
 
     (async () => {
       try {
@@ -57,7 +59,7 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
         setKeyFactors(['Error loading key factors']);
       }
     })();
-  }, [open, selectedUser, API_BASE]);
+  }, [open, selectedUser, API_BASE, hasData]);
 
   return (
     <>
@@ -75,91 +77,103 @@ const ChatFab: React.FC<ChatFabProps> = ({ selectedUser }) => {
       </button>
 
       {/* Slide-in Panel */}
-      {open && (
-        <div
-          className="fixed bottom-28 right-6 z-50 w-[480px] max-w-[90vw] max-h-[300px]
-                     bg-[#1c1c1e] text-white rounded-2xl shadow-2xl border border-white/10
-                     animate-in fade-in slide-in-from-bottom duration-300 overflow-y-auto"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-            <div className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-yellow-400" />
-              <span className="font-semibold text-base">
-                AI Insights • {selectedUser}
-              </span>
-            </div>
+{open && (
+  <div
+    className="fixed bottom-28 right-6 z-50 w-[480px] max-w-[90vw] max-h-[300px]
+               bg-[#1c1c1e] text-white rounded-2xl shadow-2xl border border-white/10
+               animate-in fade-in slide-in-from-bottom duration-300 overflow-y-auto"
+  >
+    {/* Header */}
+    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+      <div className="flex items-center gap-2">
+        <Lightbulb className="h-5 w-5 text-yellow-400" />
+        <span className="font-semibold text-base">
+          AI Insights • {hasData ? selectedUser : 'No Data Yet'}
+        </span>
+      </div>
+      <button
+        aria-label="Close"
+        onClick={() => setOpen(false)}
+        className="p-1 hover:text-accent focus:outline-none"
+      >
+        <X className="w-5 h-5" />
+      </button>
+    </div>
+
+    <div className="p-4">
+      {/* If no dataset, show placeholder */}
+      {!hasData ? (
+        <p className="text-center text-white/70">
+          Upload and process a dataset first to see AI insights.
+        </p>
+      ) : (
+        <>
+          {/* Tabs */}
+          <div className="flex w-full bg-slate-100 rounded-md overflow-hidden">
             <button
-              aria-label="Close"
-              onClick={() => setOpen(false)}
-              className="p-1 hover:text-accent focus:outline-none"
+              onClick={() => setActiveTab(1)}
+              className={`w-1/2 flex items-center justify-center py-2 text-xs cursor-pointer select-none ${
+                activeTab === 1 ? 'bg-white text-slate-900' : 'text-slate-600'
+              }`}
+              role="tab"
+              aria-selected={activeTab === 1}
             >
-              <X className="w-5 h-5" />
+              <Lightbulb
+                className={`w-3 h-3 mr-1.5 ${
+                  activeTab === 1 ? 'text-slate-900' : 'text-slate-500'
+                }`}
+              />
+              <span>Reasoning</span>
+            </button>
+            <button
+              onClick={() => setActiveTab(2)}
+              className={`w-1/2 flex items-center justify-center py-2 text-xs cursor-pointer select-none ${
+                activeTab === 2 ? 'bg-white text-slate-900' : 'text-slate-600'
+              }`}
+              role="tab"
+              aria-selected={activeTab === 2}
+            >
+              <TrendingUp
+                className={`w-3 h-3 mr-1.5 ${
+                  activeTab === 2 ? 'text-slate-900' : 'text-slate-500'
+                }`}
+              />
+              <span>Key Factors</span>
             </button>
           </div>
 
-          {/* Tabs */}
-          <div className="p-4">
-            <div className="flex w-full bg-slate-100 rounded-md overflow-hidden">
-              <button
-                onClick={() => setActiveTab(1)}
-                className={`w-1/2 flex items-center justify-center py-2 text-xs cursor-pointer select-none ${
-                  activeTab === 1 ? 'bg-white text-slate-900' : 'text-slate-600'
-                }`}
-                role="tab"
-                aria-selected={activeTab === 1}
-              >
-                <Lightbulb
-                  className={`w-3 h-3 mr-1.5 ${
-                    activeTab === 1 ? 'text-slate-900' : 'text-slate-500'
-                  }`}
-                />
-                <span>Reasoning</span>
-              </button>
-              <button
-                onClick={() => setActiveTab(2)}
-                className={`w-1/2 flex items-center justify-center py-2 text-xs cursor-pointer select-none ${
-                  activeTab === 2 ? 'bg-white text-slate-900' : 'text-slate-600'
-                }`}
-                role="tab"
-                aria-selected={activeTab === 2}
-              >
-                <TrendingUp
-                  className={`w-3 h-3 mr-1.5 ${
-                    activeTab === 2 ? 'text-slate-900' : 'text-slate-500'
-                  }`}
-                />
-                <span>Key Factors</span>
-              </button>
-            </div>
+          {/* Pane 1: Reasoning */}
+          {activeTab === 1 && (
+            <section className="pane space-y-3 mt-3">
+              <p className="text-sm leading-relaxed text-white/90">
+                {reasoning}
+              </p>
+            </section>
+          )}
 
-            {activeTab === 1 && (
-              <section className="pane space-y-3 mt-3">
-                <p className="text-sm leading-relaxed text-white/90">
-                  {reasoning}
-                </p>
-              </section>
-            )}
-
-            {activeTab === 2 && (
-              <section className="pane space-y-3 mt-3">
-                {keyFactors.map((factor, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-                  >
-                    <TrendingUp
-                      className="text-indigo-400 mt-1 flex-shrink-0"
-                      size={16}
-                    />
-                    <p className="text-sm text-white/80">{factor}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-          </div>
-        </div>
+          {/* Pane 2: Key Factors */}
+          {activeTab === 2 && (
+            <section className="pane space-y-3 mt-3">
+              {keyFactors.map((factor, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <TrendingUp
+                    className="text-indigo-400 mt-1 flex-shrink-0"
+                    size={16}
+                  />
+                  <p className="text-sm text-white/80">{factor}</p>
+                </div>
+              ))}
+            </section>
+          )}
+        </>
       )}
+    </div>
+  </div>
+)}
+
     </>
   );
 };

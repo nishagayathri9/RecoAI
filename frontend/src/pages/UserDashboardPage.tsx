@@ -446,7 +446,11 @@ const UserDashboardPage: React.FC = () => {
       </section>
 
       {/* Chat Floating Action Button */}
-      <ChatFab selectedUser={selectedUser} />
+      <ChatFab
+      selectedUser={selectedUser}
+      hasData={showDashboard && !!recommendationsData}
+    />
+
     </div>
   );
 };
