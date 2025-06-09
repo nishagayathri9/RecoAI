@@ -84,7 +84,7 @@ const networkLayers: LayerInfo[] = [
     color: '#9333EA',
     size: 1.0,
     blockType: 'cube',
-    connections: ['dien_gru'],
+    connections: ['deepfm_linear'],
   },
   {
     id: 'embed_item',
@@ -95,7 +95,7 @@ const networkLayers: LayerInfo[] = [
     color: '#9333EA',
     size: 1.0,
     blockType: 'cube',
-    connections: ['dien_gru', 'deepfm_linear', 'deepfm_fm', 'deepfm_deep'],
+    connections: ['deepfm_deep'],
   },
   {
     id: 'embed_context',
@@ -106,7 +106,7 @@ const networkLayers: LayerInfo[] = [
     color: '#9333EA',
     size: 1.0,
     blockType: 'cube',
-    connections: ['deepfm_linear', 'deepfm_deep'],
+    connections: ['deepfm_linear'],
   },
   {
     id: 'dien_gru',
@@ -139,7 +139,7 @@ const networkLayers: LayerInfo[] = [
     color: '#EF4444',
     size: 1.0,
     blockType: 'wide',
-    connections: ['fusion_layer'],
+    connections: ['dien_gru'],
   },
   {
     id: 'deepfm_deep',
