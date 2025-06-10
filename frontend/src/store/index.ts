@@ -101,8 +101,8 @@ const networkLayers: LayerInfo[] = [
   {
     id: 'embed_context',
     name: 'User Click History',
-    type: 'Dense Embedding (32D)',
-    description: 'Convert context ID into a 32-dimensional dense vector',
+    type: 'Dense Embedding (64D)',
+    description: 'Convert context ID into a 64-dimensional dense vector',
     position: [-8, -2, 0],
     color: '#9333EA',
     size: 1.0,
@@ -111,7 +111,7 @@ const networkLayers: LayerInfo[] = [
   },
   {
     id: 'deepfm_linear',
-    name: 'DeepFM: Linear',
+    name: 'Interest Embedding Layer',
     type: 'Linear Layer',
     description: 'First-order feature interactions (sum of wᵢ xᵢ)',
     position: [-4, 4, -4],
@@ -123,7 +123,7 @@ const networkLayers: LayerInfo[] = [
   {
     id: 'dien_gru',
     name: 'Interest Extractor\n(GRU)',
-    type: 'GRU Layer (128 hidden)',
+    type: 'GRU Layer (64hidden)',
     description: 'Run history through a GRU to get hidden states',
     position: [-1, 1, 0],
     color: '#10B981',
@@ -145,7 +145,7 @@ const networkLayers: LayerInfo[] = [
   {
     id: 'deepfm_deep',
     name: 'DeepFM: Deep',
-    type: 'MLP Stack',
+    type: 'Deep Neural Network',
     description: 'Higher-order interactions via MLP layers',
     position: [-4, 0, 5],
     color: '#84CC16',
@@ -176,8 +176,6 @@ const networkLayers: LayerInfo[] = [
     connections: [],
   },
 ];
-
-
 const sampleInputs: InputSample[] = [
   {
     id: 1,

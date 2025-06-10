@@ -40,7 +40,7 @@ const PlaygroundPage: React.FC = () => {
     if (isPlaying && selectedSample) {
       interval = setInterval(() => {
         nextStep();
-      }, 7000);
+      }, 9000);
     }
 
     return () => {
