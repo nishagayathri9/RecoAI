@@ -26,7 +26,7 @@ const Hero: React.FC = () => {
 
       {/* Background video – scaled to 70 % */}
       <video
-        className="absolute inset-0 w-full h-full object-cover z-10 filter brightness-100 opacity-15 transform scale-[0.7] origin-bottom-right"
+        className="absolute inset-0 w-full h-full object-cover z-10 filter brightness-100 opacity-30 transform scale-[0.7] origin-bottom-right hidden sm:block"
         style={{ objectPosition: 'right bottom' }}
         src={bgVideo}
         autoPlay

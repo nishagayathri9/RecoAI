@@ -18,7 +18,6 @@ const HomePage: React.FC = () => {
     <>
       <Navbar />
       <Hero />
-      <Features />
       
           {/* How It Works Preview */}
       <section className="section bg-background-secondary relative overflow-hidden">

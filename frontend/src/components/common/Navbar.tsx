@@ -29,6 +29,13 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth < 1024);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +58,11 @@ const Navbar: React.FC = () => {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-background/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
+        isMobile
+          ? 'bg-background shadow-md' // always solid on mobile
+          : scrolled 
+            ? 'bg-background/80 backdrop-blur-lg shadow-lg' // translucent on scroll
+            : 'bg-transparent' // transparent on top for desktop
       }`}
     >
       <nav className="container-custom py-4 lg:py-5">
