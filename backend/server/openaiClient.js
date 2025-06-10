@@ -79,15 +79,32 @@ export async function generateInsightsForUser(userId) {
     max_tokens: 150,
   });
 
-  const fullText = response.choices[0].message.content.trim();
-  const splitMarker = "\n\nKey Factors:";
-  const [reasonPart, keyPartWithLabel] = fullText.split(splitMarker);
+  // const fullText = response.choices[0].message.content.trim();
+  // const splitMarker = "\n\nKey Factors:";
+  // const [reasonPart, keyPartWithLabel] = fullText.split(splitMarker);
 
-  const reasoningOnly = reasonPart.replace(/^\s*Reasoning:\s*/i, "").trim();
-  let keyFactorsOnly = "";
-  if (keyPartWithLabel) {
-    keyFactorsOnly = keyPartWithLabel.replace(/^\s*Key Factors:\s*/i, "").trim();
+  // const reasoningOnly = reasonPart.replace(/^\s*Reasoning:\s*/i, "").trim();
+  // let keyFactorsOnly = "";
+  // if (keyPartWithLabel) {
+  //   keyFactorsOnly = keyPartWithLabel.replace(/^\s*Key Factors:\s*/i, "").trim();
+  // }
+
+  const fullText = response.choices[0].message.content.trim();
+
+// ─── Robust section parsing via RegExp ──────────────────────────────────────
+  const sectionRegex = /Reasoning:\s*([\s\S]*?)\s*(?:\*\*)?Key\s*Factors(?:\*\*)?:\s*([\s\S]*)/i;
+  const match = fullText.match(sectionRegex);
+  if (!match) {
+    throw new Error("Failed to parse OpenAI response into sections.");
   }
+
+  const reasoningOnly  = match[1].trim();
+  const keyFactorsOnly = match[2].trim();
+
+
+
+
+
 
   cachedInsightsByUser[userId] = {
     reasoning: reasoningOnly,
