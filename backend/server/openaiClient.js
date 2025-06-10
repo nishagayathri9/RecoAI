@@ -92,8 +92,10 @@ export async function generateInsightsForUser(userId) {
   const fullText = response.choices[0].message.content.trim();
 
 // ─── Robust section parsing via RegExp ──────────────────────────────────────
-  const sectionRegex = /Reasoning:\s*([\s\S]*?)\s*(?:\*\*)?Key\s*Factors(?:\*\*)?:\s*([\s\S]*)/i;
+// Improved section parsing via RegExp (handles Markdown bold, extra whitespace, etc.)
+  const sectionRegex = /(?:\*\*)?\s*Reasoning\s*:?\s*(?:\*\*)?\s*([\s\S]*?)(?:\n{2,}|$)(?:\*\*)?\s*Key\s*Factors\s*:?\s*(?:\*\*)?\s*([\s\S]*)/i;
   const match = fullText.match(sectionRegex);
+
   if (!match) {
     throw new Error("Failed to parse OpenAI response into sections.");
   }
