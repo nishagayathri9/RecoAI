@@ -100,7 +100,7 @@ const UserDashboardPage: React.FC = () => {
       console.log('[📊] File Analysis Metrics:', metrics);
 
       let selectedData: UsersData = simRecData;
-      if (fileName === 'preprocessed_beauty_tools_train_dataset_TRAIN.CSV') {
+      if (fileName === 'beauty_tools_dataset.CSV') {
         selectedData = simRecData;
       } else if (fileName === 'preprocessed_beauty_tools_train_dataset_TEST.csv') {
         selectedData = largeElectronicsClothesUsers;
@@ -265,58 +265,6 @@ const UserDashboardPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Metrics Section */}
-                    <div className="space-y-6">
-                      <div className="bg-background rounded-lg p-5 border border-white/10">
-                        <h3 className="font-medium mb-3 flex items-center">
-                          <LineChart className="h-5 w-5 mr-2 text-primary" />
-                          Recommendation Metrics
-                        </h3>
-                        <div className="space-y-4">
-                          {/* Accuracy */}
-                          <div>
-                            <div className="flex justify-between mb-1 items-center">
-                              <span className="text-sm text-white/70 flex items-center">
-                                Recommendation Accuracy
-                                <div className="relative group ml-2 flex items-center">
-                                  <button type="button" tabIndex={0} aria-label="What is Recommendation Accuracy?" className="focus:outline-none">
-                                    <Info className="h-4 w-4 text-accent cursor-pointer group-hover:text-primary group-focus:text-primary transition" />
-                                  </button>
-                                  <div className="opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition absolute z-10 left-1/2 -translate-x-1/2 mt-2 w-60 p-3 rounded bg-background-secondary border border-white/20 text-xs text-white shadow-lg">
-                                    <b>Accuracy</b> measures the percentage of correct recommendations out of all predictions.
-                                  </div>
-                                </div>
-                              </span>
-                              <span className="text-sm font-medium">{datasetMetrics.accuracy}%</span>
-                            </div>
-                            <div className="w-full bg-background-tertiary rounded-full h-2">
-                              <div className="bg-primary h-2 rounded-full" style={{ width: `${datasetMetrics.accuracy}%` }}></div>
-                            </div>
-                          </div>
-
-                          {/* AUC */}
-                          <div>
-                            <div className="flex justify-between mb-1 items-center">
-                              <span className="text-sm text-white/70 flex items-center">
-                                Recommendation AUC
-                                <div className="relative group ml-2 flex items-center">
-                                  <button type="button" tabIndex={0} aria-label="What is Recommendation AUC?" className="focus:outline-none">
-                                    <Info className="h-4 w-4 text-accent cursor-pointer group-hover:text-primary group-focus:text-primary transition" />
-                                  </button>
-                                  <div className="opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition absolute z-10 left-1/2 -translate-x-1/2 mt-2 w-60 p-3 rounded bg-background-secondary border border-white/20 text-xs text-white shadow-lg">
-                                    <b>AUC</b> (Area Under Curve) indicates the ability of the model to rank relevant items higher.
-                                  </div>
-                                </div>
-                              </span>
-                              <span className="text-sm font-medium">{datasetMetrics.auc}</span>
-                            </div>
-                            <div className="w-full bg-background-tertiary rounded-full h-2">
-                              <div className="bg-secondary h-2 rounded-full" style={{ width: `${datasetMetrics.auc}%` }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </motion.div>

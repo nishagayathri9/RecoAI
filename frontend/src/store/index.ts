@@ -100,7 +100,7 @@ const networkLayers: LayerInfo[] = [
   },
   {
     id: 'embed_context',
-    name: 'User Click History',
+    name: 'User Clicked History',
     type: 'Dense Embedding (64D)',
     description: 'Convert context ID into a 64-dimensional dense vector',
     position: [-8, -2, 0],
@@ -182,9 +182,9 @@ const sampleInputs: InputSample[] = [
     name: "Office Furniture Shopper",
     description: "User interested in minimalist desks and office furniture",
     userBehavior: [
-      "Viewed Minimalist Desks",
-      "Viewed Office Chairs",
-      "Viewed Cable Management",
+      "Clicked Minimalist Desks",
+      "Clicked Office Chairs",
+      "Clicked Cable Management",
       "Added Ash Wood Desk to Cart"
     ],
     metadata: {
@@ -198,9 +198,9 @@ const sampleInputs: InputSample[] = [
     name: "Tech Enthusiast",
     description: "User browsing high-end electronics and accessories",
     userBehavior: [
-      "Viewed Gaming Laptops",
-      "Viewed Mechanical Keyboards",
-      "Viewed Ultrawide Monitors",
+      "Clicked Gaming Laptops",
+      "Clicked Mechanical Keyboards",
+      "Clicked Ultrawide Monitors",
       "Added Gaming Headset to Cart"
     ],
     metadata: {
@@ -214,9 +214,9 @@ const sampleInputs: InputSample[] = [
     name: "Kitchen Renovator",
     description: "User looking for kitchen appliances and fixtures",
     userBehavior: [
-      "Viewed Kitchen Faucets",
-      "Viewed Refrigerators",
-      "Viewed Countertop Materials",
+      "Clicked Kitchen Faucets",
+      "Clicked Refrigerators",
+      "Clicked Countertop Materials",
       "Added Smart Dishwasher to Cart"
     ],
     metadata: {
