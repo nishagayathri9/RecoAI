@@ -11,6 +11,9 @@
 ## **📌 Overview**  
 RecoAI is an open-source hybrid recommendation system that leverages both **collaborative filtering** and **content-based filtering** to provide highly accurate and scalable product recommendations for e-commerce businesses. Designed for flexibility, it can be deployed locally or on the cloud, integrated with existing AI pipelines, and fine-tuned with proprietary data.
 
+## 🖼 System Architecture
+![RecoAI Architecture](assets/architecture.png)
+
 ---
 
 ## **🚀 Features**  
