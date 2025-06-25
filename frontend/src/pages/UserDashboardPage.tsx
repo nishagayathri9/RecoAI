@@ -62,42 +62,13 @@ const UserDashboardPage: React.FC = () => {
 
     const fileToUpload = files[0].file;
     const fileName = fileToUpload.name;
-    const formData = new FormData();
-    formData.append('data_file', fileToUpload);
-
-    const API_BASE = import.meta.env.VITE_API_BASE_URL;
-    const uploadEndpoint = `${API_BASE}/upload/`;
 
     setIsProcessing(true);
-    console.log('[📤] Uploading file to API:', uploadEndpoint);
+    console.log('[🧾] Simulating local file analysis...');
 
     try {
-      const response = await fetch(uploadEndpoint, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const responseBody = await response.json();
-
-      console.log('[✅] Upload response status:', response.status);
-      console.log('[🧾] Upload response body:', responseBody);
-
-      if (!response.ok) {
-        const msg = `[❌ Upload Failed] ${responseBody?.detail || 'Unknown error. Please check your dataset format.'}`;
-        console.error(msg);
-        setUploadError(
-          `Upload failed: ${responseBody?.detail || 'Please make sure your dataset meets the required format (e.g., product_id, category, features, etc.).'}`
-        );
-
-        setFiles([]);
-        setShowDashboard(false);
-        return;
-      }
-
-      console.log('[🚀] File upload successful. Proceeding to recommendation step...');
-
       const metrics = await datasetAnalysis(fileToUpload);
-      console.log('[📊] File Analysis Metrics:', metrics);
+      console.log('[📊] Local File Analysis Metrics:', metrics);
 
       let selectedData: UsersData = simRecData;
       if (fileName === 'beauty_tools_dataset.CSV') {
@@ -105,24 +76,20 @@ const UserDashboardPage: React.FC = () => {
       } else if (fileName === 'preprocessed_beauty_tools_train_dataset_TEST.csv') {
         selectedData = largeElectronicsClothesUsers;
       }
-      setRecommendationsData(selectedData);
 
+      setRecommendationsData(selectedData);
       setDatasetMetrics(metrics);
+      setUploadDetails(null);
+      setUploadFeatures([]);
       setProcessingComplete(true);
       setShowDashboard(true);
-
-      setUploadDetails(responseBody?.detail || null);
-      setUploadFeatures(Array.isArray(responseBody?.features) ? responseBody.features : []);
-
-      setFiles([]);
-
     } catch (err) {
-      console.error('[🔥] Upload error:', err);
-      setUploadError('Upload failed: Network or server error. Please try again.');
+      console.error('[🔥] Local processing error:', err);
+      setUploadError('Dataset processing failed locally. Please check your file.');
       setShowDashboard(false);
-      setFiles([]);
     } finally {
       setIsProcessing(false);
+      setFiles([]);
     }
   };
 
